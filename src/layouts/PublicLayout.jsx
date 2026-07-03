@@ -3,6 +3,7 @@
 // Total header height: ~108px desktop, ~64px mobile.
 // <main> has matching top padding so content clears the header.
 
+import AIChatWidget from '@/components/public/AIChatWidget'
 import Footer from '@/components/public/Footer'
 import Header from '@/components/public/Header'
 import { Outlet } from 'react-router-dom'
@@ -16,6 +17,8 @@ export default function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      {/* AI assistant — floats bottom-right on every public page */}
+      <AIChatWidget />
     </div>
   )
 }
