@@ -182,7 +182,7 @@ export default function Footer() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Your email address"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/8 border border-white/15 text-white placeholder-white/40 text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/8 border border-white/15 text-black placeholder-white/40 text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
                   />
                 </div>
                 <button
