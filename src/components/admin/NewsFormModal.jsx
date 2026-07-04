@@ -132,7 +132,7 @@ export default function NewsFormModal({
                         value={form.title}
                         onChange={e => update('title', e.target.value)}
                         error={errors.title}
-                        placeholder="e.g. [Candidate Name] Launches Youth Empowerment Fund"
+                        placeholder="e.g. Marungu Launches Youth Empowerment Fund"
                     />
 
                     <div className="flex flex-col gap-1">

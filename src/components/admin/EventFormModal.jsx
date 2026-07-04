@@ -157,7 +157,7 @@ export default function EventFormModal({
                         value={form.title}
                         onChange={e => update('title', e.target.value)}
                         error={errors.title}
-                        placeholder="e.g. Community Town Hall — Kibera"
+                        placeholder="e.g. Community water project Bogeka"
                     />
 
                     <Input
@@ -166,7 +166,7 @@ export default function EventFormModal({
                         value={form.location}
                         onChange={e => update('location', e.target.value)}
                         error={errors.location}
-                        placeholder="e.g. Kibera Community Hall, Nairobi"
+                        placeholder="e.g. Irianyi, Bogeka, Kisii county"
                     />
 
                     <Input

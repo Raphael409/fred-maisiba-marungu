@@ -1,21 +1,25 @@
 // src/components/admin/Sidebar.jsx
 
-import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, CalendarDays, FolderKanban,
-  Image, Newspaper, Users, MessageSquare,
-  Calendar, X,
+  Calendar,
+  CalendarDays, FolderKanban,
+  Image,
+  LayoutDashboard,
+  MessageSquare,
+  Newspaper, Users,
+  X,
 } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
 
 const navItems = [
-  { label: 'Dashboard',   to: '/admin',            icon: LayoutDashboard, end: true },
-  { label: 'Events',      to: '/admin/events',     icon: CalendarDays },
-  { label: 'Calendar',    to: '/admin/calendar',   icon: Calendar },
-  { label: 'Projects',    to: '/admin/projects',   icon: FolderKanban },
-  { label: 'Gallery',     to: '/admin/gallery',    icon: Image },
-  { label: 'News',        to: '/admin/news',       icon: Newspaper },
-  { label: 'Volunteers',  to: '/admin/volunteers', icon: Users },
-  { label: 'Messages',    to: '/admin/messages',   icon: MessageSquare },
+  { label: 'Dashboard', to: '/admin', icon: LayoutDashboard, end: true },
+  { label: 'Events', to: '/admin/events', icon: CalendarDays },
+  { label: 'Calendar', to: '/admin/calendar', icon: Calendar },
+  { label: 'Projects', to: '/admin/projects', icon: FolderKanban },
+  { label: 'Gallery', to: '/admin/gallery', icon: Image },
+  { label: 'News', to: '/admin/news', icon: Newspaper },
+  { label: 'Volunteers', to: '/admin/volunteers', icon: Users },
+  { label: 'Messages', to: '/admin/messages', icon: MessageSquare },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -57,10 +61,9 @@ export default function Sidebar({ isOpen, onClose }) {
               end={end}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg font-heading font-medium text-sm transition-colors duration-150 ${
-                  isActive
-                    ? 'bg-secondary text-primary'
-                    : 'text-neutral-on-dark-muted hover:bg-primary-light hover:text-neutral-on-dark'
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg font-heading font-medium text-sm transition-colors duration-150 ${isActive
+                  ? 'bg-secondary text-primary'
+                  : 'text-neutral-on-dark-muted hover:bg-primary-light hover:text-neutral-on-dark'
                 }`
               }
             >
@@ -73,7 +76,7 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Footer hint */}
         <div className="px-4 py-3 border-t border-primary-light">
           <p className="text-xs text-neutral-on-dark-muted">
-            [Candidate Name] Campaign &copy; {new Date().getFullYear()}
+            Marungu Campaign &copy; {new Date().getFullYear()}
           </p>
         </div>
       </aside>

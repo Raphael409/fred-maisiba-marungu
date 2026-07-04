@@ -43,7 +43,7 @@ export default function Login() {
       await signIn(email, password)
       // Don't navigate here — let the useEffect above handle it
       // once AuthContext finishes the isAdmin check
-      toast.success('Welcome back!')
+      toast.success('Success!')
     } catch {
       toast.error('Invalid email or password.')
       setLoading(false)
