@@ -25,7 +25,7 @@ const quickLinks = [
 ]
 
 const involvedLinks = [
-  { label: 'Volunteer Registration', to: '/volunteer' },
+  { label: 'Membership Registration', to: '/volunteer' },
   { label: 'Contact & Support', to: '/contact' },
   { label: 'News & Events', to: '/news' },
 ]
@@ -210,7 +210,7 @@ export default function Footer() {
             <a href="#" className="hover:text-accent transition-colors">Terms of Use</a>
           </div>
           <p className="text-neutral-on-dark-muted">
-            Paid for by the Fred Maisiba Campaign Committee.
+            Developed by: Raphael Mbuya
           </p>
         </div>
       </div>

@@ -263,59 +263,7 @@ function HeroSection({ projectCount, communityCount }) {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10 w-full py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* ── RIGHT: Candidate photo + floating stat cards ────── */}
-          <div className="relative flex justify-center lg:justify-end">
 
-            {/* Decorative rings behind photo */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[360px] h-[360px] lg:w-[440px] lg:h-[440px] rounded-full border-2 border-white/10" />
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[300px] h-[300px] lg:w-[380px] lg:h-[380px] rounded-full border border-white/5 bg-white/5" />
-            </div>
-
-            {/* Candidate photo */}
-            {/* NOTE: replace placeholderPhotoUrl below with the Cloudinary URL
-                once the candidate's photo has been uploaded — see comment
-                at top of file for why the original Facebook link won't work. */}
-            <div className="relative w-[280px] h-[360px] sm:w-[320px] sm:h-[420px] lg:w-[380px] lg:h-[500px] rounded-3xl overflow-hidden shadow-float border-4 border-white/20 z-10">
-              <img
-                src="https://res.cloudinary.com/dhkkunuyp/image/upload/v1783005786/696857342_10227010253996865_1671340349094157195_n_qipg0h.jpg"
-                alt="Fred Maisiba Marungu — Candidate for Bogeka Ward MCA"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-primary/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <p className="font-heading font-bold text-white text-lg leading-tight">
-                  Fred Maisiba Marungu
-                </p>
-                <p className="text-white/70 text-xs font-medium uppercase tracking-wider">
-                  Candidate for Bogeka Ward MCA
-                </p>
-              </div>
-            </div>
-
-            {/* Floating stat card — top left */}
-            <FloatCard
-              number={projectCount}
-              label="Projects done"
-              className="-left-4 sm:-left-8 top-8 animate-[floatSlow_5s_ease-in-out_infinite]"
-            />
-
-            {/* Floating stat card — bottom right */}
-            <FloatCard
-              number={communityCount}
-              label="Communities Served"
-              className="-right-4 sm:-right-8 bottom-16 animate-[floatSlow_5s_ease-in-out_1.5s_infinite]"
-            />
-
-            {/* Floating badge — top right */}
-            <div className="absolute -right-2 sm:right-0 top-1/3 z-20 bg-primary border border-white/20 rounded-xl px-4 py-3 shadow-float animate-[floatSlow_6s_ease-in-out_0.8s_infinite]">
-              <p className="font-heading font-bold text-white text-lg leading-tight">#1</p>
-              <p className="text-white/70 text-xs leading-tight">Community<br />Leader</p>
-            </div>
-
-          </div>
           {/* ── LEFT: Text content ─────────────────────────────── */}
           <div className="text-white">
 
@@ -397,7 +345,59 @@ function HeroSection({ projectCount, communityCount }) {
 
           </div>
 
+          {/* ── RIGHT: Candidate photo + floating stat cards ────── */}
+          <div className="relative flex justify-center lg:justify-end">
 
+            {/* Decorative rings behind photo */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[360px] h-[360px] lg:w-[440px] lg:h-[440px] rounded-full border-2 border-white/10" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[300px] h-[300px] lg:w-[380px] lg:h-[380px] rounded-full border border-white/5 bg-white/5" />
+            </div>
+
+            {/* Candidate photo */}
+            {/* NOTE: replace placeholderPhotoUrl below with the Cloudinary URL
+                once the candidate's photo has been uploaded — see comment
+                at top of file for why the original Facebook link won't work. */}
+            <div className="relative w-[280px] h-[360px] sm:w-[320px] sm:h-[420px] lg:w-[380px] lg:h-[500px] rounded-3xl overflow-hidden shadow-float border-4 border-white/20 z-10">
+              <img
+                src="https://res.cloudinary.com/dhkkunuyp/image/upload/v1783236041/campaign/gallery/djzk4vngsux4zhmdeof9.jpg"
+                alt="Fred Maisiba Marungu — Candidate for Bogeka Ward MCA"
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-primary/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <p className="font-heading font-bold text-white text-lg leading-tight">
+                  Fred Maisiba Marungu
+                </p>
+                <p className="text-white/70 text-xs font-medium uppercase tracking-wider">
+                  Candidate for Bogeka Ward MCA
+                </p>
+              </div>
+            </div>
+
+            {/* Floating stat card — top left */}
+            <FloatCard
+              number={projectCount}
+              label="Projects"
+              className="-left-4 sm:-left-8 top-8 animate-[floatSlow_5s_ease-in-out_infinite]"
+            />
+
+            {/* Floating stat card — bottom right */}
+            <FloatCard
+              number={communityCount}
+              label="Communities Served"
+              className="-right-4 sm:-right-8 bottom-16 animate-[floatSlow_5s_ease-in-out_1.5s_infinite]"
+            />
+
+            {/* Floating badge — top right */}
+            <div className="absolute -right-2 sm:right-0 top-1/3 z-20 bg-primary border border-white/20 rounded-xl px-4 py-3 shadow-float animate-[floatSlow_6s_ease-in-out_0.8s_infinite]">
+              <p className="font-heading font-bold text-white text-lg leading-tight">#1</p>
+              <p className="text-white/70 text-xs leading-tight">Community<br />Leader</p>
+            </div>
+
+          </div>
 
         </div>
       </div>
