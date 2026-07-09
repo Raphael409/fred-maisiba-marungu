@@ -22,8 +22,9 @@ export default function PublicLayout() {
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
       <Header />
-      {/* pt clears fixed header: 64px mobile, 108px desktop */}
-      <main className="flex-1 pt-16 lg:pt-[108px]">
+      {/* No global top padding — the floating nav overlaps the hero intentionally.
+          Non-hero pages handle clearing the header via pt-32 lg:pt-36 on their first section. */}
+      <main className="flex-1">
         <Outlet />
       </main>
       <Footer />

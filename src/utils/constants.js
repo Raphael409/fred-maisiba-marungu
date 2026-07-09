@@ -9,9 +9,10 @@ export const PROJECT_CATEGORIES = [
   'Youth Empowerment',
   'Women & Family',
   'Environment',
+  'Vulnerable & PWD',
 ]
 
-export const PROJECT_STATUSES = ['completed', 'ongoing']
+export const PROJECT_STATUSES = ['planning', 'initiated', 'ongoing', 'completed', 'stalled']
 
 export const NEWS_CATEGORIES = ['press', 'event', 'community', 'media']
 
@@ -23,6 +24,7 @@ export const VOLUNTEER_ROLES = [
   'Data Entry / Admin',
   'Youth Mobilization',
   'Transport / Logistics',
+  'securityy',
 ]
 
 export const VOLUNTEER_STATUSES = ['new', 'contacted', 'active']

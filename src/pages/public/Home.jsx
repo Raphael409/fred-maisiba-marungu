@@ -2,7 +2,6 @@
 // Homepage — complete with all sections.
 
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
-import { addDocument } from '@/firebase/firestore'
 import { useFeaturedProjects } from '@/hooks/useFeaturedProjects'
 import { useProjects } from '@/hooks/useProjects'
 import { usePublicEvents } from '@/hooks/usePublicEvents'
@@ -22,24 +21,18 @@ import {
   HardHat,
   Heart,
   Image as ImageIcon,
-  Mail,
   MapPin,
-  MessageSquare,
   Newspaper,
-  Phone,
   Quote,
-  Send,
   Sparkles,
   Sprout,
   Stethoscope,
   Tag,
-  User,
   Users,
   Wifi,
   ZoomIn
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 
 // ─── Count-up hook ──────────────────────────────────────────────────────────
@@ -253,150 +246,110 @@ function FloatCard({ number, suffix = '+', label, className = '' }) {
 // ─── Hero Section ───────────────────────────────────────────────────────────
 function HeroSection({ projectCount, communityCount }) {
   return (
-    <section className="relative bg-primary overflow-hidden min-h-[92vh] flex items-center">
+    <section className="relative overflow-hidden min-h-[92vh] flex items-center">
 
-      {/* Background gradient + decorative circles */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent/80" />
-      <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-white/5 blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-white/5" />
+      {/* ── Full-width background image ── */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://res.cloudinary.com/dhkkunuyp/image/upload/v1783203168/campaign/news/lshtsujcmvvr0afpenks.jpg"
+          alt="Fred Maisiba Marungu — Bogeka Ward MCA"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Dark overlay — heavier on the left (text side), lighter on the right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+        {/* Bottom fade for wave divider transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/60 to-transparent" />
+      </div>
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10 w-full py-16 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      {/* ── Content ── */}
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 w-full pt-24 pb-20 lg:pt-20 lg:pb-28">
+        <div className="max-w-2xl">
 
-          {/* ── LEFT: Text content ─────────────────────────────── */}
-          <div className="text-white">
-
-            {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="text-xs font-heading font-semibold uppercase tracking-widest text-white/90">
-                For Bogeka Ward MCA
-              </span>
-            </div>
-
-            {/* Slogan */}
-            <p className="font-accent italic text-2xl sm:text-3xl text-white/90 mb-3">
-              &ldquo;Chinsiaga&rdquo;
-            </p>
-
-            {/* Main headline */}
-            <h1 className="font-heading font-bold leading-[1.05] mb-6 text-[clamp(2.2rem,5vw,3.6rem)]">
-              Leadership That{' '}
-              <span className="relative inline-block">
-                Delivers
-                <svg
-                  className="absolute -bottom-2 left-0 w-full"
-                  viewBox="0 0 200 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M2 9 C50 3, 100 3, 198 9"
-                    stroke="#F45A22"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              {' '}Real Change
-            </h1>
-
-            {/* Subtext */}
-            <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-lg">
-              Fred Maisiba Marungu is running for Bogeka Ward MCA — together we build
-              a stronger Bogeka through development, transparency, and opportunity.
-              Not promises — proven results.
-            </p>
-
-            {/* Bullet points */}
-            <ul className="space-y-2.5 mb-10">
-              {[
-                'Proven track record of completed community projects',
-                'Transparent, accountable leadership',
-                'Vision rooted in real community needs',
-              ].map((point) => (
-                <li key={point} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-accent/30 border border-accent/50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                  </div>
-                  <span className="text-white/85 text-sm">{point}</span>
-                </li>
-              ))}
-            </ul>
-
-            {/* CTA buttons */}
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-primary font-heading font-bold text-sm rounded-full shadow-float hover:bg-neutral-bg hover:scale-105 transition-all duration-200"
-              >
-                About Fred Maisiba
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                to="/projects"
-                className="inline-flex items-center gap-2 px-7 py-3.5 border-2 border-white/50 text-white font-heading font-semibold text-sm rounded-full hover:bg-white hover:text-primary hover:scale-105 transition-all duration-200"
-              >
-                View Projects
-                <ArrowRight size={16} />
-              </Link>
-            </div>
-
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="text-xs font-heading font-semibold uppercase tracking-widest text-white/90">
+              Candidate for Bogeka Ward MCA
+            </span>
           </div>
 
-          {/* ── RIGHT: Candidate photo + floating stat cards ────── */}
-          <div className="relative flex justify-center lg:justify-end">
+          {/* Slogan */}
+          <p className="font-accent italic text-2xl sm:text-3xl text-white/90 mb-3">
+            &ldquo;Chinsiaga&rdquo;
+          </p>
 
-            {/* Decorative rings behind photo */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[360px] h-[360px] lg:w-[440px] lg:h-[440px] rounded-full border-2 border-white/10" />
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[300px] h-[300px] lg:w-[380px] lg:h-[380px] rounded-full border border-white/5 bg-white/5" />
-            </div>
+          {/* Main headline */}
+          <h1 className="font-heading font-bold leading-[1.05] mb-6 text-[clamp(2.2rem,5vw,3.6rem)] text-white">
+            Leadership That{' '}
+            <span className="relative inline-block">
+              Delivers
+              <svg
+                className="absolute -bottom-2 left-0 w-full"
+                viewBox="0 0 200 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 9 C50 3, 100 3, 198 9"
+                  stroke="#F45A22"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            {' '}Real Change
+          </h1>
 
-            {/* Candidate photo */}
-            {/* NOTE: replace placeholderPhotoUrl below with the Cloudinary URL
-                once the candidate's photo has been uploaded — see comment
-                at top of file for why the original Facebook link won't work. */}
-            <div className="relative w-[280px] h-[360px] sm:w-[320px] sm:h-[420px] lg:w-[380px] lg:h-[500px] rounded-3xl overflow-hidden shadow-float border-4 border-white/20 z-10">
-              <img
-                src="https://res.cloudinary.com/dhkkunuyp/image/upload/v1783236041/campaign/gallery/djzk4vngsux4zhmdeof9.jpg"
-                alt="Fred Maisiba Marungu — Candidate for Bogeka Ward MCA"
-                className="w-full h-full object-cover object-top"
-              />
-              <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-primary/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <p className="font-heading font-bold text-white text-lg leading-tight">
-                  Fred Maisiba Marungu
+          {/* Subtext */}
+          <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl">
+            Fred Maisiba Marungu is running for Bogeka Ward MCA — together we build
+            a stronger Bogeka through development, transparency, and opportunity.
+            Not promises — proven results.
+          </p>
+
+          {/* CTA buttons */}
+          <div className="flex flex-wrap gap-4 mb-10">
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-primary font-heading font-bold text-sm rounded-full shadow-float hover:bg-neutral-bg hover:scale-105 transition-all duration-200"
+            >
+              About Fred Maisiba
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-2 px-7 py-3.5 border-2 border-white/50 text-white font-heading font-semibold text-sm rounded-full hover:bg-white hover:text-primary hover:scale-105 transition-all duration-200"
+            >
+              View Projects
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {/* Floating stat cards — inline below CTAs */}
+          <div className="flex flex-wrap gap-4">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center flex-shrink-0">
+                <CheckCircle size={18} className="text-accent" />
+              </div>
+              <div>
+                <p className="font-heading font-bold text-xl text-white leading-tight">
+                  {projectCount}+
                 </p>
-                <p className="text-white/70 text-xs font-medium uppercase tracking-wider">
-                  Candidate for Bogeka Ward MCA
-                </p>
+                <p className="text-xs text-white/60 leading-tight">Projects Completed</p>
               </div>
             </div>
 
-            {/* Floating stat card — top left */}
-            <FloatCard
-              number={projectCount}
-              label="Projects"
-              className="-left-4 sm:-left-8 top-8 animate-[floatSlow_5s_ease-in-out_infinite]"
-            />
-
-            {/* Floating stat card — bottom right */}
-            <FloatCard
-              number={communityCount}
-              label="Communities Served"
-              className="-right-4 sm:-right-8 bottom-16 animate-[floatSlow_5s_ease-in-out_1.5s_infinite]"
-            />
-
-            {/* Floating badge — top right */}
-            <div className="absolute -right-2 sm:right-0 top-1/3 z-20 bg-primary border border-white/20 rounded-xl px-4 py-3 shadow-float animate-[floatSlow_6s_ease-in-out_0.8s_infinite]">
-              <p className="font-heading font-bold text-white text-lg leading-tight">#1</p>
-              <p className="text-white/70 text-xs leading-tight">Community<br />Leader</p>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0">
+                <CheckCircle size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="font-heading font-bold text-xl text-white leading-tight">
+                  {communityCount}+
+                </p>
+                <p className="text-xs text-white/60 leading-tight">Communities Served</p>
+              </div>
             </div>
-
           </div>
 
         </div>
@@ -1441,10 +1394,10 @@ export default function Home() {
   const completedCount = projects.filter(p => p.status === 'completed').length
   const communityCount = new Set(projects.map(p => p.location).filter(Boolean)).size
 
-  const residentsTarget = 20000
+  const residentsTarget = 2000
   const youthTarget = 100
   const villagesTarget = communityCount || 15
-  const profile_imageURL = "https://res.cloudinary.com/dhkkunuyp/image/upload/v1783005786/696857342_10227010253996865_1671340349094157195_n_qipg0h.jpg"
+
   return (
     <div>
       <HeroSection
@@ -1464,7 +1417,6 @@ export default function Home() {
       <GallerySection />
       <TestimonialsSection />
       <CTABand />
-      <ContactSection />
     </div>
   )
 }

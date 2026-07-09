@@ -19,7 +19,7 @@ export default function NewsEvents() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary text-white py-16 lg:py-20">
+      <section className="bg-gradient-hero text-white pt-32 pb-16 lg:pt-40 lg:pb-20">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <p className="text-secondary font-heading font-semibold text-sm uppercase tracking-wide mb-2">
             Stay Connected

@@ -127,25 +127,37 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── MAIN NAV BAR ─────────────────────────────────────────── */}
-      <div className="bg-secondary">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-[72px] gap-6">
+      {/* ── MAIN NAV BAR — floating pill ─────────────────────────── */}
+      {/* Wrapper centers the pill and gives it horizontal breathing room */}
+      <div className="px-4 lg:px-8 py-2">
+        <div
+          className={`
+            mx-auto w-full max-w-[90%]
+            rounded-3xl
+            transition-all duration-300
+            ${scrolled
+              ? 'bg-secondary/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(22,25,26,0.35)] border border-white/10'
+              : 'bg-secondary/85 backdrop-blur-lg shadow-[0_4px_20px_rgba(22,25,26,0.25)] border border-white/10'
+            }
+          `}
+        >
+          <div className="flex items-center justify-between h-14 lg:h-16 px-5 lg:px-7 gap-6">
 
-            {/* Logo */}
+            {/* Logo — always shows name text on all screen sizes */}
             <Link
               to="/"
               className="flex items-center gap-2.5 flex-shrink-0"
             >
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md">
-                <span className="text-primary font-heading font-bold text-sm">C</span>
+              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md flex-shrink-0">
+                <span className="text-secondary font-heading font-bold text-xs">FM</span>
               </div>
-              <div className="hidden sm:block">
-                <p className="font-heading font-bold text-white text-base leading-tight">
-                  Fred Maisiba Marungu
+              {/* Show name on ALL screen sizes including mobile */}
+              <div>
+                <p className="font-heading font-bold text-white text-sm leading-tight">
+                  Fred Maisiba
                 </p>
-                <p className="text-[10px] text-white/70 font-medium uppercase tracking-wide leading-tight">
-                  for Bogeka Ward MCA
+                <p className="text-[9px] text-white/60 font-medium uppercase tracking-wide leading-tight hidden sm:block">
+                  Bogeka Ward MCA
                 </p>
               </div>
             </Link>
@@ -159,27 +171,25 @@ export default function Header() {
                 item.children ? (
                   <div key={item.label} className="relative group">
                     <button
-                      className="flex items-center gap-1 px-4 py-2 font-heading font-medium text-sm text-white/90 hover:text-white transition-colors duration-150 rounded-md hover:bg-white/10"
+                      className="flex items-center gap-1 px-3 py-2 font-heading font-medium text-sm text-white/85 hover:text-white transition-colors duration-150 rounded-lg hover:bg-white/10"
                       aria-haspopup="true"
                       aria-expanded="false"
                     >
                       {item.label}
                       <ChevronDown
                         size={13}
-                        className="text-white/60 group-hover:rotate-180 transition-transform duration-200"
+                        className="text-white/50 group-hover:rotate-180 transition-transform duration-200"
                       />
                     </button>
-
-                    {/* Dropdown — stays white for readability */}
-                    <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-xl shadow-float border border-neutral-border py-1.5 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
+                    <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-xl shadow-float border border-neutral-border py-1.5 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
                       {item.children.map(child => (
                         <NavLink
                           key={child.to}
                           to={child.to}
                           className={({ isActive }) =>
                             `flex items-center gap-2 px-4 py-2.5 text-sm transition-colors duration-100 ${isActive
-                              ? 'text-primary font-semibold bg-neutral-bg'
-                              : 'text-neutral-dark hover:bg-neutral-bg hover:text-primary'
+                              ? 'text-secondary font-semibold bg-neutral-bg'
+                              : 'text-neutral-dark hover:bg-neutral-bg hover:text-secondary'
                             }`
                           }
                         >
@@ -195,9 +205,9 @@ export default function Header() {
                     to={item.to}
                     end={item.end}
                     className={({ isActive }) =>
-                      `px-4 py-2 font-heading font-medium text-sm rounded-md transition-colors duration-150 ${isActive
-                        ? 'text-white bg-white/20 font-semibold'
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                      `px-3 py-2 font-heading font-medium text-sm rounded-lg transition-colors duration-150 ${isActive
+                        ? 'text-white bg-white/15 font-semibold'
+                        : 'text-white/85 hover:text-white hover:bg-white/10'
                       }`
                     }
                   >
@@ -207,129 +217,124 @@ export default function Header() {
               )}
             </nav>
 
-            {/* Right side — CTA button */}
-            <div className="hidden lg:flex items-center flex-shrink-0">
-
-              {/* Single CTA — Get Involved (orange accent for emphasis) */}
+            {/* Right — CTA + hamburger */}
+            <div className="flex items-center gap-3 flex-shrink-0">
               <Link
                 to="/volunteer"
-                className="px-6 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors duration-200 shadow-glow"
+                className="hidden lg:inline-flex px-5 py-2 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors duration-200 shadow-glow"
               >
                 Get Involved
               </Link>
-            </div>
 
-            {/* Mobile hamburger */}
-            <button
-              className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
-              onClick={() => setMobileOpen(v => !v)}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileOpen}
-            >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+              {/* Mobile hamburger */}
+              <button
+                className="lg:hidden p-1.5 text-white hover:bg-white/10 rounded-lg transition-colors"
+                onClick={() => setMobileOpen(v => !v)}
+                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={mobileOpen}
+              >
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
 
           </div>
         </div>
       </div>
 
-      {/* ── MOBILE MENU ──────────────────────────────────────────── */}
+      {/* ── MOBILE MENU — drops below the pill ───────────────────────── */}
       {mobileOpen && (
-        <div className="lg:hidden bg-secondary border-t border-white/10 shadow-float overflow-y-auto max-h-[calc(100vh-65px)]">
-          <div className="container mx-auto px-4 py-4 space-y-0.5">
+        <div className="lg:hidden px-4 pb-3">
+          <div className="mx-auto w-full max-w-[80%] bg-secondary/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-float overflow-hidden">
+            <div className="px-4 py-3 space-y-0.5 max-h-[70vh] overflow-y-auto">
 
-            {navItems.map(item =>
-              item.children ? (
-                <div key={item.label}>
-                  <button
-                    onClick={() => toggleDropdown(item.label)}
-                    className="flex items-center justify-between w-full px-3 py-3 font-heading font-medium text-sm text-white/90 hover:bg-white/10 rounded-lg transition-colors"
-                    aria-expanded={openDropdown === item.label}
+              {navItems.map(item =>
+                item.children ? (
+                  <div key={item.label}>
+                    <button
+                      onClick={() => toggleDropdown(item.label)}
+                      className="flex items-center justify-between w-full px-3 py-2.5 font-heading font-medium text-sm text-white/90 hover:bg-white/10 rounded-lg transition-colors"
+                      aria-expanded={openDropdown === item.label}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        size={15}
+                        className={`text-white/50 transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''
+                          }`}
+                      />
+                    </button>
+                    {openDropdown === item.label && (
+                      <div className="ml-4 pl-3 border-l-2 border-white/20 space-y-0.5 mt-0.5 mb-1">
+                        {item.children.map(child => (
+                          <NavLink
+                            key={child.to}
+                            to={child.to}
+                            onClick={() => setMobileOpen(false)}
+                            className={({ isActive }) =>
+                              `flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${isActive
+                                ? 'text-white font-semibold bg-white/15'
+                                : 'text-white/70 hover:text-white hover:bg-white/10'
+                              }`
+                            }
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent/80 flex-shrink-0" />
+                            {child.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      `block px-3 py-2.5 font-heading font-medium text-sm rounded-lg transition-colors ${isActive
+                        ? 'text-white bg-white/15 font-semibold'
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                      }`
+                    }
                   >
                     {item.label}
-                    <ChevronDown
-                      size={15}
-                      className={`text-white/50 transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''
-                        }`}
-                    />
-                  </button>
+                  </NavLink>
+                )
+              )}
 
-                  {openDropdown === item.label && (
-                    <div className="ml-4 pl-3 border-l-2 border-white/20 space-y-0.5 mt-0.5 mb-1">
-                      {item.children.map(child => (
-                        <NavLink
-                          key={child.to}
-                          to={child.to}
-                          onClick={() => setMobileOpen(false)}
-                          className={({ isActive }) =>
-                            `flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors ${isActive
-                              ? 'text-white font-semibold bg-white/20'
-                              : 'text-white/70 hover:text-white hover:bg-white/10'
-                            }`
-                          }
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent/80 flex-shrink-0" />
-                          {child.label}
-                        </NavLink>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `block px-3 py-3 font-heading font-medium text-sm rounded-lg transition-colors ${isActive
-                      ? 'text-white bg-white/20 font-semibold'
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`
-                  }
+              {/* Mobile contact info */}
+              <div className="pt-3 mt-1 border-t border-white/10 space-y-2.5">
+                <a
+                  href="tel:+254719562294"
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10"
                 >
-                  {item.label}
-                </NavLink>
-              )
-            )}
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                    <Phone size={13} className="text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-white/60 uppercase tracking-wide">Call Anytime</p>
+                    <p className="text-sm font-heading font-bold text-white">+254 719 562 294</p>
+                  </div>
+                </a>
 
-            {/* Mobile contact info */}
-            <div className="pt-3 mt-2 border-t border-white/10 space-y-3">
-              <a
-                href="tel:+254719562294"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10"
-              >
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                  <Phone size={14} className="text-primary" />
+                <div className="flex items-center gap-2 px-3">
+                  <MapPin size={13} className="text-accent flex-shrink-0" />
+                  <p className="text-xs text-white/70">Bogeka Ward, Kenya</p>
                 </div>
-                <div>
-                  <p className="text-[10px] text-white/60 uppercase tracking-wide">Call Anytime</p>
-                  <p className="text-sm font-heading font-bold text-white">+254 719 562 294</p>
+
+                <div className="flex items-center gap-3 px-3">
+                  <span className="text-xs text-white/60">Follow Us:</span>
+                  {socials.map(({ icon: Icon, href, label }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      aria-label={label}
+                      className="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
+                    >
+                      <Icon size={13} />
+                    </a>
+                  ))}
                 </div>
-              </a>
 
-              <div className="flex items-center gap-2 px-3">
-                <MapPin size={14} className="text-accent flex-shrink-0" />
-                <p className="text-xs text-white/70">Bogeka Ward</p>
-              </div>
-
-              {/* Social icons */}
-              <div className="flex items-center gap-3 px-3">
-                <span className="text-xs text-white/60">Follow Us:</span>
-                {socials.map(({ icon: Icon, href, label }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    className="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
-                  >
-                    <Icon size={13} />
-                  </a>
-                ))}
-              </div>
-
-              {/* CTA button */}
-              <div className="pt-1">
                 <Link
                   to="/volunteer"
                   onClick={() => setMobileOpen(false)}
@@ -338,8 +343,8 @@ export default function Header() {
                   Get Involved
                 </Link>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
       )}
