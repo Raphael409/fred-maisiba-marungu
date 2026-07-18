@@ -3,88 +3,118 @@
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import { useSingleDocument } from '@/hooks/useSingleDocument'
 import { formatDate } from '@/utils/formatDate'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Calendar, Newspaper, Share2 } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 
 export default function NewsDetail() {
-  const { newsId } = useParams()
-  const { data: article, loading } = useSingleDocument('news', newsId)
+  const { id } = useParams()
+  const { document: article, loading } = useSingleDocument('news', id)
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-24">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-[50vh]">
+      <LoadingSpinner size="lg" />
+    </div>
+  )
 
-  if (!article || !article.isPublished) {
-    return (
-      <div className="container mx-auto px-4 py-24 text-center">
-        <h1 className="font-heading text-2xl font-bold text-primary mb-2">Article Not Found</h1>
-        <p className="text-neutral-muted mb-6">This article may have been removed or the link is incorrect.</p>
-        <Link to="/news" className="text-accent font-semibold hover:text-accent-dark">
-          &larr; Back to News &amp; Events
-        </Link>
-      </div>
-    )
-  }
+  if (!article) return (
+    <div className="text-center py-32">
+      <Newspaper size={40} className="text-neutral-muted mx-auto mb-3" />
+      <h2 className="font-heading font-bold text-xl text-primary mb-2">Article not found</h2>
+      <Link to="/news" className="text-accent font-semibold hover:text-accent-dark">
+        Back to News
+      </Link>
+    </div>
+  )
 
   return (
-    <article>
-      {/* Hero image */}
-      <div className="relative h-[35vh] lg:h-[50vh] overflow-hidden">
-        <img
-          src={article.coverImage}
-          alt={article.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent" />
-        <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-4 lg:px-8 pb-8">
-            <Link
-              to="/news"
-              className="inline-flex items-center gap-1.5 text-white/90 hover:text-secondary text-sm font-medium mb-4"
-            >
-              <ArrowLeft size={16} /> Back to News &amp; Events
-            </Link>
-            <span className="inline-block bg-secondary text-primary text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
+    <div>
+      {/* Hero */}
+      {/* Hero image — natural aspect ratio, no crop */}
+      {article.coverImage && (
+        <div className="w-full bg-neutral-dark pt-28 lg:pt-36">
+          <img
+            src={article.coverImage}
+            alt={article.title}
+            className="w-full max-h-[600px] object-contain mx-auto block"
+          />
+        </div>
+      )}
+
+      {/* Title bar */}
+      <section className="relative bg-gradient-to-b from-primary to-secondary py-8 lg:py-10 overflow-hidden">
+        <div className="container mx-auto px-4 lg:px-8 relative z-10 max-w-3xl">
+          <Link to="/news" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-5 transition-colors">
+            <ArrowLeft size={15} /> Back to News
+          </Link>
+          {article.category && (
+            <span className="inline-block text-xs font-bold bg-accent text-white px-3 py-1 rounded-full uppercase tracking-wide mb-3">
               {article.category}
             </span>
-            <h1 className="font-heading text-2xl lg:text-4xl font-bold text-white max-w-3xl">
-              {article.title}
-            </h1>
-            <p className="text-white/70 text-sm mt-3">
-              {formatDate(article.publishedAt || article.createdAt, 'dd MMMM yyyy')}
-            </p>
+          )}
+          <h1 className="font-heading font-bold text-2xl lg:text-4xl text-white mb-4 leading-tight">
+            {article.title}
+          </h1>
+          <div className="flex items-center gap-3 text-white/60 text-sm">
+            <span className="flex items-center gap-1.5">
+              <Calendar size={13} className="text-accent" />
+              {formatDate(article.publishedAt || article.createdAt)}
+            </span>
+            {article.author && <span>by <strong className="text-white/80">{article.author}</strong></span>}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Article body */}
-      <div className="container mx-auto px-4 lg:px-8 py-12 lg:py-16">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-lg text-primary font-medium mb-6 leading-relaxed">
-            {article.excerpt}
-          </p>
-          <div
-            className="article-content"
-            dangerouslySetInnerHTML={{ __html: article.body }}
-          />
+      <section className="bg-white py-12 lg:py-16">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-3xl mx-auto">
 
-          <div className="mt-10 pt-8 border-t border-neutral-border flex justify-between items-center">
-            <Link to="/news" className="text-sm font-semibold text-accent hover:text-accent-dark">
-              &larr; All News &amp; Events
+            {article.excerpt && (
+              <p className="text-lg text-neutral-muted leading-relaxed mb-8 pb-8 border-b border-neutral-border font-medium">
+                {article.excerpt}
+              </p>
+            )}
+
+            {/* Rich text content from Quill */}
+            <div
+              className="article-content prose prose-sm lg:prose max-w-none text-neutral-dark leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: article.content || article.body || '' }}
+            />
+
+            {/* Share row */}
+            <div className="mt-10 pt-8 border-t border-neutral-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-xs text-neutral-muted uppercase tracking-wide mb-1">Published by</p>
+                <p className="font-heading font-semibold text-primary">Fred Maisiba Campaign — Bogeka Ward</p>
+              </div>
+              <button
+                onClick={() => { navigator.share?.({ title: article.title, url: window.location.href }) }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 border border-neutral-border text-neutral-dark font-heading font-semibold text-sm rounded-xl hover:bg-neutral-bg transition-colors"
+              >
+                <Share2 size={14} /> Share Article
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-secondary py-12">
+        <div className="container mx-auto px-4 lg:px-8 text-center">
+          <h2 className="font-heading font-bold text-xl lg:text-2xl text-white mb-3">Stay Updated</h2>
+          <p className="text-white/70 mb-6 max-w-md mx-auto text-sm">
+            Get the latest news and events from the Fred Maisiba campaign delivered to you.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/news" className="inline-flex items-center gap-2 px-6 py-2.5 border-2 border-white/40 text-white font-heading font-semibold text-sm rounded-full hover:bg-white hover:text-secondary transition-colors">
+              More News
             </Link>
-            <Link
-              to="/volunteer"
-              className="px-5 py-2.5 bg-secondary text-primary font-heading font-semibold text-sm rounded hover:bg-secondary-dark transition-colors"
-            >
+            <Link to="/volunteer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow">
               Get Involved
             </Link>
           </div>
         </div>
-      </div>
-    </article>
+      </section>
+    </div>
   )
 }

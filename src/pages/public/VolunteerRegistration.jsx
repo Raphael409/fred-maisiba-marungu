@@ -230,11 +230,11 @@ export default function VolunteerRegistration() {
                   +254 719 562 294
                 </a>
                 <a
-                  href="mailto:fredmaisiba@gmail.com"
+                  href="mailto:fmarungu2011@gmail.com"
                   className="flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors font-medium mt-1"
                 >
                   <Mail size={14} />
-                  fredmaisiba@gmail.com
+                  fmarungu2011@gmail.com
                 </a>
               </div>
             </div>

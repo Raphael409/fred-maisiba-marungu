@@ -90,19 +90,19 @@ export default function DataTable({
                                             {onEdit && (
                                                 <button
                                                     onClick={() => onEdit(row)}
-                                                    className="p-1.5 rounded hover:bg-accent/10 text-accent hover:text-accent-dark transition-colors"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary hover:text-white text-xs font-semibold transition-colors"
                                                     aria-label="Edit"
                                                 >
-                                                    <Pencil size={16} />
+                                                    <Pencil size={13} /> Edit
                                                 </button>
                                             )}
                                             {onDelete && (
                                                 <button
                                                     onClick={() => onDelete(row)}
-                                                    className="p-1.5 rounded hover:bg-red-50 text-red-500 hover:text-red-700 transition-colors"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white text-xs font-semibold transition-colors"
                                                     aria-label="Delete"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={13} /> Delete
                                                 </button>
                                             )}
                                         </div>

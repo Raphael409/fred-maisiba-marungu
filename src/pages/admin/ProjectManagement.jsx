@@ -123,7 +123,7 @@ export default function ProjectManagement() {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-primary">Project Management</h1>
+          <h1 className="font-heading text-2xl font-bold text-neutral-dark">Project Management</h1>
           <p className="text-sm text-neutral-muted mt-1">
             Manage community projects and achievements shown on the public site.
           </p>
@@ -194,6 +194,7 @@ export default function ProjectManagement() {
 
       {/* Delete confirmation */}
       <ConfirmDialog
+        mode="delete"
         isOpen={!!deleteTarget}
         title="Delete this project?"
         message={`"${deleteTarget?.title}" will be permanently removed. This cannot be undone.`}

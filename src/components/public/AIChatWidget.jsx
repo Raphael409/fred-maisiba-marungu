@@ -99,7 +99,7 @@ const knowledgeBase = [
     // Contact
     {
         keywords: ['contact', 'reach', 'call', 'phone', 'email', 'message', 'talk', 'office'],
-        answer: `You can reach the Fred Maisiba campaign team at:\n📞 +254 719 562 294\n✉️ fredmaisiba@gmail.com\n📍 Bogeka Ward, Kenya\nOffice hours: Mon–Fri, 8am–6pm`,
+        answer: `You can reach the Fred Maisiba campaign team at:\n📞 +254 719 562 294\n✉️ fmarungu2011@gmail.com\n📍 Bogeka Ward, Kenya\nOffice hours: Mon–Fri, 8am–6pm`,
         link: { label: 'Send a Message', to: '/contact' },
     },
     // Donate / Support
@@ -158,8 +158,8 @@ function MessageBubble({ msg }) {
             )}
             <div
                 className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isBot
-                        ? 'bg-neutral-bg text-neutral-dark rounded-tl-none'
-                        : 'bg-secondary text-white rounded-tr-none'
+                    ? 'bg-neutral-bg text-neutral-dark rounded-tl-none'
+                    : 'bg-secondary text-white rounded-tr-none'
                     }`}
             >
                 <p className="whitespace-pre-line">{msg.text}</p>
@@ -241,7 +241,7 @@ export default function AIChatWidget() {
             } else {
                 addMessage(
                     'bot',
-                    `I'm not sure about that yet — but the Fred Maisiba campaign team can help!\n\n📞 +254 719 562 294\n✉️ fredmaisiba@gmail.com`,
+                    `I'm not sure about that yet — but the Fred Maisiba campaign team can help!\n\n📞 +254 719 562 294\n✉️ fmarungu2011@gmail.com`,
                     { label: 'Send a Message', to: '/contact' }
                 )
             }

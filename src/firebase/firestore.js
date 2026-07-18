@@ -2,23 +2,23 @@
 // Generic Firestore helpers used across all custom hooks.
 
 import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
   addDoc,
-  updateDoc,
+  collection,
   deleteDoc,
-  query,
-  where,
-  orderBy,
+  doc,
+  getDoc,
+  getDocs,
   limit,
-  serverTimestamp,
   onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from 'firebase/firestore'
 import { db } from './config'
 
-// ─── Read ────────────────────────────────────────────────────
+// ─── Read ────────────────────────────────────────────────────────────────────
 
 export function getCollection(collectionName) {
   return collection(db, collectionName)
@@ -26,13 +26,13 @@ export function getCollection(collectionName) {
 
 export async function getDocuments(collectionName, constraints = []) {
   const ref = collection(db, collectionName)
-  const q   = constraints.length ? query(ref, ...constraints) : ref
+  const q = constraints.length ? query(ref, ...constraints) : ref
   const snap = await getDocs(q)
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }
 
 export async function getDocument(collectionName, docId) {
-  const ref  = doc(db, collectionName, docId)
+  const ref = doc(db, collectionName, docId)
   const snap = await getDoc(ref)
   if (!snap.exists()) return null
   return { id: snap.id, ...snap.data() }
@@ -40,18 +40,32 @@ export async function getDocument(collectionName, docId) {
 
 export function subscribeToCollection(collectionName, constraints = [], callback) {
   const ref = collection(db, collectionName)
-  const q   = constraints.length ? query(ref, ...constraints) : ref
-  return onSnapshot(q, snap => {
-    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    callback(data)
-  })
+  const q = constraints.length ? query(ref, ...constraints) : ref
+  return onSnapshot(
+    q,
+    snap => {
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      callback(data)
+    },
+    err => {
+      // Log the error so it's visible in the browser console.
+      // Common cause: missing Firestore composite index.
+      // The hook's safety timeout will stop the spinner.
+      console.error(`[Firestore] subscribeToCollection error on "${collectionName}":`, err.message)
+    }
+  )
 }
 
-// ─── Write ───────────────────────────────────────────────────
+// ─── Write ───────────────────────────────────────────────────────────────────
 
 export async function addDocument(collectionName, data) {
   const ref = collection(db, collectionName)
-  return addDoc(ref, { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() })
+  const docRef = await addDoc(ref, {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
 }
 
 export async function updateDocument(collectionName, docId, data) {
@@ -64,6 +78,6 @@ export async function deleteDocument(collectionName, docId) {
   return deleteDoc(ref)
 }
 
-// ─── Re-export Firestore query helpers for use in hooks ──────
+// ─── Re-export Firestore query helpers for use in hooks ───────────────────────
 
-export { where, orderBy, limit, serverTimestamp }
+export { limit, orderBy, serverTimestamp, where }

@@ -4,166 +4,179 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import { usePublicGallery } from '@/hooks/usePublicGallery'
 import { useSingleDocument } from '@/hooks/useSingleDocument'
 import { formatDate } from '@/utils/formatDate'
-import { ArrowLeft, Calendar, DollarSign, MapPin } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  CheckCircle, FolderKanban,
+  MapPin,
+  Tag,
+  Users,
+} from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 
+const STATUS_COLORS = {
+  completed: 'bg-success/10 text-success border-success/20',
+  ongoing: 'bg-accent/10 text-accent-dark border-accent/20',
+  initiated: 'bg-blue-50 text-blue-700 border-blue-200',
+  planned: 'bg-purple-50 text-purple-700 border-purple-200',
+  stalled: 'bg-red-50 text-red-600 border-red-200',
+}
+
 export default function ProjectDetail() {
-  const { projectId } = useParams()
-  const { data: project, loading } = useSingleDocument('projects', projectId)
+  const { id } = useParams()
+  const { document: project, loading } = useSingleDocument('projects', id)
   const { galleryItems } = usePublicGallery()
 
-  const relatedPhotos = galleryItems.filter(
-    item => item.relatedProjectId === projectId
+  const relatedPhotos = galleryItems
+    .filter(g => g.relatedProjectId === id || g.projectId === id)
+    .slice(0, 6)
+
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-[50vh]">
+      <LoadingSpinner size="lg" />
+    </div>
   )
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-24">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
-
-  if (!project) {
-    return (
-      <div className="container mx-auto px-4 py-24 text-center">
-        <h1 className="font-heading text-2xl font-bold text-primary mb-2">Project Not Found</h1>
-        <p className="text-neutral-muted mb-6">This project may have been removed or the link is incorrect.</p>
-        <Link to="/projects" className="text-accent font-semibold hover:text-accent-dark">
-          &larr; Back to all projects
-        </Link>
-      </div>
-    )
-  }
+  if (!project) return (
+    <div className="text-center py-32">
+      <FolderKanban size={40} className="text-neutral-muted mx-auto mb-3" />
+      <h2 className="font-heading font-bold text-xl text-primary mb-2">Project not found</h2>
+      <Link to="/projects" className="text-accent font-semibold hover:text-accent-dark">
+        ← Back to Projects
+      </Link>
+    </div>
+  )
 
   return (
     <div>
-      {/* Hero image */}
-      <div className="relative h-[40vh] lg:h-[55vh] overflow-hidden">
-        <img
-          src={project.coverImage}
-          alt={project.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark/90 via-primary-dark/20 to-transparent" />
+      {/* Hero */}
+      {/* Hero image — natural aspect ratio, no crop */}
+      {project.coverImage && (
+        <div className="w-full bg-neutral-dark pt-28 lg:pt-36">
+          <img
+            src={project.coverImage}
+            alt={project.title}
+            className="w-full max-h-[600px] object-contain mx-auto block"
+          />
+        </div>
+      )}
 
-        <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-4 lg:px-8 pb-8">
-            <Link
-              to="/projects"
-              className="inline-flex items-center gap-1.5 text-white/90 hover:text-secondary text-sm font-medium mb-4"
-            >
-              <ArrowLeft size={16} /> Back to all projects
-            </Link>
-            <span className="inline-block bg-secondary text-primary text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
-              {project.category}
+      {/* Title bar */}
+      <section className="relative bg-gradient-to-b from-primary to-secondary py-8 lg:py-10 overflow-hidden">
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <Link to="/projects" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-4 transition-colors">
+            <ArrowLeft size={15} /> Back to Projects
+          </Link>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {project.category && (
+              <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20">
+                <Tag size={10} />{project.category}
+              </span>
+            )}
+            <span className={`text-xs font-bold px-3 py-1 rounded-full border capitalize ${STATUS_COLORS[project.status] || STATUS_COLORS.planned}`}>
+              {project.status}
             </span>
-            <h1 className="font-heading text-2xl lg:text-4xl font-bold text-white max-w-3xl">
-              {project.title}
-            </h1>
+          </div>
+          <h1 className="font-heading font-bold text-2xl lg:text-4xl text-white mb-3 max-w-3xl">
+            {project.title}
+          </h1>
+          <div className="flex flex-wrap gap-4 text-white/70 text-sm">
+            {project.location && (
+              <span className="flex items-center gap-1.5"><MapPin size={14} className="text-accent" />{project.location}</span>
+            )}
+            {project.startDate && (
+              <span className="flex items-center gap-1.5"><Calendar size={14} className="text-accent" />{formatDate(project.startDate)}</span>
+            )}
+            {project.beneficiaries && (
+              <span className="flex items-center gap-1.5"><Users size={14} className="text-accent" />{project.beneficiaries.toLocaleString()} beneficiaries</span>
+            )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
-      <div className="container mx-auto px-4 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <section className="bg-white py-12 lg:py-16">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-          {/* Main content */}
-          <div className="lg:col-span-2">
-            <p className="text-lg text-primary font-medium mb-6 leading-relaxed">
-              {project.impactSummary}
-            </p>
-            <div className="prose-content">
-              <p className="text-neutral-dark leading-relaxed whitespace-pre-line">
-                {project.description}
-              </p>
+            {/* Main content */}
+            <div className="lg:col-span-2">
+              {project.impactSummary && (
+                <div className="bg-neutral-bg border-l-4 border-accent rounded-r-xl p-5 mb-8">
+                  <p className="font-heading font-semibold text-primary">{project.impactSummary}</p>
+                </div>
+              )}
+
+              {project.description && (
+                <div className="prose prose-sm max-w-none text-neutral-muted leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: project.description }} />
+              )}
+
+              {/* Gallery photos */}
+              {relatedPhotos.length > 0 && (
+                <div className="mt-10">
+                  <h3 className="font-heading font-bold text-lg text-primary mb-4">Project Photos</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {relatedPhotos.map(photo => (
+                      <div key={photo.id} className="aspect-square rounded-xl overflow-hidden">
+                        <img src={photo.imageUrl} alt={photo.caption || ''} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Related gallery photos */}
-            {relatedPhotos.length > 0 && (
-              <div className="mt-10">
-                <h2 className="font-heading text-xl font-semibold text-primary mb-4">
-                  Photos from this Project
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {relatedPhotos.map(photo => (
-                    <Link
-                      key={photo.id}
-                      to="/gallery"
-                      className="aspect-square rounded-lg overflow-hidden"
-                    >
-                      <img
-                        src={photo.imageUrl}
-                        alt=""
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                      />
-                    </Link>
+            {/* Sidebar */}
+            <div className="space-y-5">
+              <div className="bg-neutral-bg rounded-2xl p-5 border border-neutral-border">
+                <h3 className="font-heading font-semibold text-primary mb-4">Project Details</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Status', value: project.status, icon: CheckCircle },
+                    { label: 'Category', value: project.category, icon: Tag },
+                    { label: 'Location', value: project.location, icon: MapPin },
+                    { label: 'Start Date', value: project.startDate ? formatDate(project.startDate) : null, icon: Calendar },
+                    { label: 'End Date', value: project.endDate ? formatDate(project.endDate) : null, icon: Calendar },
+                    { label: 'Beneficiaries', value: project.beneficiaries ? project.beneficiaries.toLocaleString() : null, icon: Users },
+                  ].filter(item => item.value).map(({ label, value, icon: Icon }) => (
+                    <div key={label} className="flex items-start gap-3">
+                      <Icon size={14} className="text-accent mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-neutral-muted uppercase tracking-wide">{label}</p>
+                        <p className="text-sm font-medium text-neutral-dark capitalize">{value}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Sidebar — key facts */}
-          <aside className="lg:col-span-1">
-            <div className="bg-neutral-bg rounded-xl p-6 space-y-5 sticky top-24">
-              <h3 className="font-heading font-semibold text-primary text-lg">Project Details</h3>
-
-              <div className="flex items-start gap-3">
-                <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs text-neutral-muted">Location</p>
-                  <p className="text-sm font-medium text-neutral-dark">{project.location}</p>
-                </div>
+              <div className="bg-secondary rounded-2xl p-5 text-white">
+                <h3 className="font-heading font-bold mb-2">Support This Work</h3>
+                <p className="text-white/70 text-sm mb-4">Help Fred Maisiba deliver more projects like this across Bogeka Ward.</p>
+                <Link to="/volunteer"
+                  className="block text-center py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-xl hover:bg-accent-dark transition-colors shadow-glow">
+                  Get Involved
+                </Link>
               </div>
-
-              <div className="flex items-start gap-3">
-                <span className="w-[18px] h-[18px] flex-shrink-0 mt-0.5">
-                  <span className={`block w-2.5 h-2.5 rounded-full mt-1 ${project.status === 'completed' ? 'bg-success' : 'bg-secondary'
-                    }`} />
-                </span>
-                <div>
-                  <p className="text-xs text-neutral-muted">Status</p>
-                  <p className="text-sm font-medium text-neutral-dark capitalize">{project.status}</p>
-                </div>
-              </div>
-
-              {project.completedDate && (
-                <div className="flex items-start gap-3">
-                  <Calendar size={18} className="text-accent flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-neutral-muted">Completed</p>
-                    <p className="text-sm font-medium text-neutral-dark">
-                      {formatDate(project.completedDate)}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {project.budget && (
-                <div className="flex items-start gap-3">
-                  <DollarSign size={18} className="text-accent flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-neutral-muted">Budget</p>
-                    <p className="text-sm font-medium text-neutral-dark">
-                      KES {Number(project.budget).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <Link
-                to="/volunteer"
-                className="block text-center mt-2 px-4 py-2.5 bg-secondary text-primary font-heading font-semibold text-sm rounded hover:bg-secondary-dark transition-colors"
-              >
-                Support More Projects Like This
-              </Link>
             </div>
-          </aside>
 
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-neutral-bg py-12 border-t border-neutral-border">
+        <div className="container mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Link to="/projects" className="inline-flex items-center gap-2 text-secondary font-heading font-semibold text-sm hover:text-accent transition-colors">
+            <ArrowLeft size={15} /> All Projects
+          </Link>
+          <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-2.5 bg-secondary text-white font-heading font-semibold text-sm rounded-full hover:bg-secondary-dark transition-colors">
+            Ask About This Project <ArrowRight size={15} />
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

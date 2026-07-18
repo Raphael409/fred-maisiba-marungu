@@ -127,21 +127,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── MAIN NAV BAR — floating pill ─────────────────────────── */}
-      {/* Wrapper centers the pill and gives it horizontal breathing room */}
-      <div className="px-4 lg:px-8 py-2">
-        <div
-          className={`
-            mx-auto w-full max-w-[90%]
-            rounded-3xl
-            transition-all duration-300
-            ${scrolled
-              ? 'bg-secondary/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(22,25,26,0.35)] border border-white/10'
-              : 'bg-secondary/85 backdrop-blur-lg shadow-[0_4px_20px_rgba(22,25,26,0.25)] border border-white/10'
-            }
-          `}
-        >
-          <div className="flex items-center justify-between h-14 lg:h-16 px-5 lg:px-7 gap-6">
+      {/* ── MAIN NAV BAR — full width ─────────────────────────── */}
+      <div className="bg-secondary shadow-md">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex items-center justify-between h-14 lg:h-16 gap-6">
 
             {/* Logo — always shows name text on all screen sizes */}
             <Link
@@ -206,7 +195,7 @@ export default function Header() {
                     end={item.end}
                     className={({ isActive }) =>
                       `px-3 py-2 font-heading font-medium text-sm rounded-lg transition-colors duration-150 ${isActive
-                        ? 'text-white bg-white/15 font-semibold'
+                        ? 'text-white bg-accent font-semibold shadow-sm'
                         : 'text-white/85 hover:text-white hover:bg-white/10'
                       }`
                     }
@@ -241,110 +230,108 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── MOBILE MENU — drops below the pill ───────────────────────── */}
+      {/* ── MOBILE MENU ──────────────────────────────────────────── */}
       {mobileOpen && (
-        <div className="lg:hidden px-4 pb-3">
-          <div className="mx-auto w-full max-w-[80%] bg-secondary/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-float overflow-hidden">
-            <div className="px-4 py-3 space-y-0.5 max-h-[70vh] overflow-y-auto">
+        <div className="lg:hidden bg-secondary border-t border-white/10 shadow-float overflow-y-auto max-h-[calc(100vh-100px)]">
+          <div className="container mx-auto px-4 py-3 space-y-0.5">
 
-              {navItems.map(item =>
-                item.children ? (
-                  <div key={item.label}>
-                    <button
-                      onClick={() => toggleDropdown(item.label)}
-                      className="flex items-center justify-between w-full px-3 py-2.5 font-heading font-medium text-sm text-white/90 hover:bg-white/10 rounded-lg transition-colors"
-                      aria-expanded={openDropdown === item.label}
-                    >
-                      {item.label}
-                      <ChevronDown
-                        size={15}
-                        className={`text-white/50 transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''
-                          }`}
-                      />
-                    </button>
-                    {openDropdown === item.label && (
-                      <div className="ml-4 pl-3 border-l-2 border-white/20 space-y-0.5 mt-0.5 mb-1">
-                        {item.children.map(child => (
-                          <NavLink
-                            key={child.to}
-                            to={child.to}
-                            onClick={() => setMobileOpen(false)}
-                            className={({ isActive }) =>
-                              `flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${isActive
-                                ? 'text-white font-semibold bg-white/15'
-                                : 'text-white/70 hover:text-white hover:bg-white/10'
-                              }`
-                            }
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent/80 flex-shrink-0" />
-                            {child.label}
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.end}
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `block px-3 py-2.5 font-heading font-medium text-sm rounded-lg transition-colors ${isActive
-                        ? 'text-white bg-white/15 font-semibold'
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
-                      }`
-                    }
+            {navItems.map(item =>
+              item.children ? (
+                <div key={item.label}>
+                  <button
+                    onClick={() => toggleDropdown(item.label)}
+                    className="flex items-center justify-between w-full px-3 py-2.5 font-heading font-medium text-sm text-white/90 hover:bg-white/10 rounded-lg transition-colors"
+                    aria-expanded={openDropdown === item.label}
                   >
                     {item.label}
-                  </NavLink>
-                )
-              )}
-
-              {/* Mobile contact info */}
-              <div className="pt-3 mt-1 border-t border-white/10 space-y-2.5">
-                <a
-                  href="tel:+254719562294"
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10"
-                >
-                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-                    <Phone size={13} className="text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-[9px] text-white/60 uppercase tracking-wide">Call Anytime</p>
-                    <p className="text-sm font-heading font-bold text-white">+254 719 562 294</p>
-                  </div>
-                </a>
-
-                <div className="flex items-center gap-2 px-3">
-                  <MapPin size={13} className="text-accent flex-shrink-0" />
-                  <p className="text-xs text-white/70">Bogeka Ward, Kenya</p>
+                    <ChevronDown
+                      size={15}
+                      className={`text-white/50 transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''
+                        }`}
+                    />
+                  </button>
+                  {openDropdown === item.label && (
+                    <div className="ml-4 pl-3 border-l-2 border-white/20 space-y-0.5 mt-0.5 mb-1">
+                      {item.children.map(child => (
+                        <NavLink
+                          key={child.to}
+                          to={child.to}
+                          onClick={() => setMobileOpen(false)}
+                          className={({ isActive }) =>
+                            `flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${isActive
+                              ? 'text-white font-semibold bg-white/15'
+                              : 'text-white/70 hover:text-white hover:bg-white/10'
+                            }`
+                          }
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent/80 flex-shrink-0" />
+                          {child.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
                 </div>
-
-                <div className="flex items-center gap-3 px-3">
-                  <span className="text-xs text-white/60">Follow Us:</span>
-                  {socials.map(({ icon: Icon, href, label }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      aria-label={label}
-                      className="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
-                    >
-                      <Icon size={13} />
-                    </a>
-                  ))}
-                </div>
-
-                <Link
-                  to="/volunteer"
+              ) : (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center px-4 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow"
+                  className={({ isActive }) =>
+                    `block px-3 py-2.5 font-heading font-medium text-sm rounded-lg transition-colors ${isActive
+                      ? 'text-white bg-accent font-semibold'
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`
+                  }
                 >
-                  Get Involved
-                </Link>
+                  {item.label}
+                </NavLink>
+              )
+            )}
+
+            {/* Mobile contact info */}
+            <div className="pt-3 mt-1 border-t border-white/10 space-y-2.5">
+              <a
+                href="tel:+254719562294"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/10"
+              >
+                <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                  <Phone size={13} className="text-secondary" />
+                </div>
+                <div>
+                  <p className="text-[9px] text-white/60 uppercase tracking-wide">Call Anytime</p>
+                  <p className="text-sm font-heading font-bold text-white">+254 719 562 294</p>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-2 px-3">
+                <MapPin size={13} className="text-accent flex-shrink-0" />
+                <p className="text-xs text-white/70">Bogeka Ward, Kenya</p>
               </div>
 
+              <div className="flex items-center gap-3 px-3">
+                <span className="text-xs text-white/60">Follow Us:</span>
+                {socials.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="w-7 h-7 rounded bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
+                  >
+                    <Icon size={13} />
+                  </a>
+                ))}
+              </div>
+
+              <Link
+                to="/volunteer"
+                onClick={() => setMobileOpen(false)}
+                className="block text-center px-4 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow"
+              >
+                Get Involved
+              </Link>
             </div>
+
           </div>
         </div>
       )}

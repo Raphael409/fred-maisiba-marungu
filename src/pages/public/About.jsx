@@ -272,7 +272,7 @@ export default function About() {
               {[
                 { label: 'Ward', value: 'Bogeka' },
                 { label: 'Position', value: 'Ward MCA' },
-                { label: 'Email', value: 'fredmaisiba@gmail.com' },
+                { label: 'Email', value: 'fmarungu2011@gmail.com' },
                 { label: 'Phone', value: '+254 719 562 294' },
               ].map(({ label, value }) => (
                 <div key={label} className="bg-neutral-bg rounded-xl p-4 text-center">

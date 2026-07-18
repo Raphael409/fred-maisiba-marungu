@@ -104,7 +104,7 @@ export default function VolunteerManagement() {
     <div>
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="font-heading text-2xl font-bold text-primary">Volunteer Management</h1>
+        <h1 className="font-heading text-2xl font-bold text-neutral-dark">Volunteer Management</h1>
         <p className="text-sm text-neutral-muted mt-1">
           Review and follow up with volunteer sign-ups from the public site.
           Click any row to view full details.
@@ -162,6 +162,7 @@ export default function VolunteerManagement() {
 
       {/* Delete confirmation */}
       <ConfirmDialog
+        mode="delete"
         isOpen={!!deleteTarget}
         title="Delete this volunteer record?"
         message={`"${deleteTarget?.fullName}"'s submission will be permanently removed. This cannot be undone.`}

@@ -1,5 +1,6 @@
 // src/components/public/Footer.jsx
 
+import { addDocument } from '@/firebase/firestore'
 import {
   ArrowRight,
   Facebook,
@@ -13,6 +14,7 @@ import {
   Youtube,
 } from 'lucide-react'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 
 const quickLinks = [
@@ -25,7 +27,7 @@ const quickLinks = [
 ]
 
 const involvedLinks = [
-  { label: 'Membership Registration', to: '/volunteer' },
+  { label: 'Volunteer Registration', to: '/volunteer' },
   { label: 'Contact & Support', to: '/contact' },
   { label: 'News & Events', to: '/news' },
 ]
@@ -42,12 +44,21 @@ export default function Footer() {
   const [email, setEmail] = useState('')
   const [subDone, setSubDone] = useState(false)
 
-  function handleSubscribe(e) {
+  async function handleSubscribe(e) {
     e.preventDefault()
     if (!email.trim()) return
-    // TODO: wire to email service (e.g. Mailchimp, ConvertKit)
-    setSubDone(true)
-    setEmail('')
+    try {
+      await addDocument('newsletterSubscribers', {
+        email: email.trim().toLowerCase(),
+        subscribedAt: new Date(),
+      })
+      setSubDone(true)
+      setEmail('')
+      toast.success('Subscribed! Thank you.')
+    } catch (err) {
+      console.error('Newsletter subscribe error:', err?.code, err?.message)
+      toast.error('Failed to subscribe. Please try again.')
+    }
   }
 
   return (
@@ -146,11 +157,11 @@ export default function Footer() {
                 +254 719 562 294
               </a>
               <a
-                href="mailto:fredmaisiba@gmail.com"
+                href="mailto:fmarungu2011@gmail.com"
                 className="flex items-center gap-2 text-sm hover:text-accent transition-colors"
               >
                 <Mail size={13} className="text-accent flex-shrink-0" />
-                fredmaisiba@gmail.com
+                fmarungu2011@gmail.com
               </a>
               <span className="flex items-center gap-2 text-sm">
                 <MapPin size={13} className="text-accent flex-shrink-0" />
@@ -182,7 +193,7 @@ export default function Footer() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Your email address"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/8 border border-white/15 text-black placeholder-white/40 text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/8 border border-white/15 text-white placeholder-white/40 text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
                   />
                 </div>
                 <button

@@ -1,74 +1,64 @@
-// firestore.rules
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─── Helper: check if the requesting user is a registered admin ────────
+    function isAuth() {
+      return request.auth != null;
+    }
+
     function isAdmin() {
-      return request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      return isAuth() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // ─── Public read collections ──────────────────────────────────────────
-    // Anyone can read; only admins can write.
-
-    match /projects/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /galleryItems/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /news/{docId} {
-      // Public can only read published items
-      allow read: if resource.data.isPublished == true || isAdmin();
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /events/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /manifesto/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    match /siteContent/{docId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    // ─── Submission collections ───────────────────────────────────────────
-    // Anyone can create (submit form); only admins can read/update/delete.
-
-    match /volunteers/{docId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-
-    match /contactMessages/{docId} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-
-    // ─── Admin registry ───────────────────────────────────────────────────
-    // Only the matching user can read their own admin doc.
-    // No client can write — manage via Firebase Console or Admin SDK only.
-
+    // Admin collection
     match /admins/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if false;
+      allow read: if isAuth() && request.auth.uid == uid;
+      allow write: if isAdmin();
     }
 
-    // ─── Deny everything else ─────────────────────────────────────────────
-    match /{document=**} {
-      allow read, write: if false;
+    // Public read collections
+    match /projects/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
+
+    match /news/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /events/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /galleryItems/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /gallery/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Public submit collections
+    match /contactMessages/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /volunteers/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /newsletterSubscribers/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
   }
 }

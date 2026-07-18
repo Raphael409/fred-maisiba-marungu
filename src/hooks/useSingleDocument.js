@@ -36,5 +36,5 @@ export function useSingleDocument(collectionName, docId) {
         return () => { cancelled = true }
     }, [collectionName, docId])
 
-    return { data, loading, error }
+    return { document: data, loading, error }
 }
