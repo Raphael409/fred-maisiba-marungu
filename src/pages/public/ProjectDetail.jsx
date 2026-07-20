@@ -51,19 +51,14 @@ export default function ProjectDetail() {
   return (
     <div>
       {/* Hero */}
-      {/* Hero image — natural aspect ratio, no crop */}
-      {project.coverImage && (
-        <div className="w-full bg-neutral-dark pt-28 lg:pt-36">
-          <img
-            src={project.coverImage}
-            alt={project.title}
-            className="w-full max-h-[600px] object-contain mx-auto block"
-          />
-        </div>
-      )}
-
-      {/* Title bar */}
-      <section className="relative bg-gradient-to-b from-primary to-secondary py-8 lg:py-10 overflow-hidden">
+      {/* Hero — full bleed, always 16:9 since images are cropped on upload */}
+      <section className="relative bg-gradient-hero pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden min-h-[420px] flex items-end">
+        {project.coverImage && (
+          <div className="absolute inset-0">
+            <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+          </div>
+        )}
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <Link to="/projects" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-4 transition-colors">
             <ArrowLeft size={15} /> Back to Projects
@@ -157,7 +152,7 @@ export default function ProjectDetail() {
                 <p className="text-white/70 text-sm mb-4">Help Fred Maisiba deliver more projects like this across Bogeka Ward.</p>
                 <Link to="/volunteer"
                   className="block text-center py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-xl hover:bg-accent-dark transition-colors shadow-glow">
-                  Get Involved
+                  Join Our Movement
                 </Link>
               </div>
             </div>

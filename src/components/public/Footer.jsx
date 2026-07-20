@@ -27,7 +27,7 @@ const quickLinks = [
 ]
 
 const involvedLinks = [
-  { label: 'Volunteer Registration', to: '/volunteer' },
+  { label: 'Membership Registration', to: '/volunteer' },
   { label: 'Contact & Support', to: '/contact' },
   { label: 'News & Events', to: '/news' },
 ]
@@ -126,10 +126,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 — Get Involved + Contact */}
+          {/* Col 3 — Join Our Movement + Contact */}
           <div>
             <h3 className="font-heading font-semibold text-white text-sm mb-5 uppercase tracking-wider">
-              Get Involved
+              Join Our Movement
             </h3>
             <ul className="space-y-2.5 mb-7">
               {involvedLinks.map(link => (
@@ -221,7 +221,15 @@ export default function Footer() {
             <a href="#" className="hover:text-accent transition-colors">Terms of Use</a>
           </div>
           <p className="text-neutral-on-dark-muted">
-            Developed by: Raphael Mbuya
+            Designed &amp; built by{' '}
+            <a
+              href="https://raphaelmbuya.onrender.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:text-accent-light transition-colors font-medium"
+            >
+              Raphael Mbuya
+            </a>
           </p>
         </div>
       </div>

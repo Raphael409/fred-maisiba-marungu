@@ -18,7 +18,7 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Public read collections
+    // Public read, admin write
     match /projects/{id} {
       allow read: if true;
       allow write: if isAdmin();
@@ -34,27 +34,32 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    match /galleryItems/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
     match /gallery/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Public submit collections
+    match /galleryItems/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Volunteers — public can query (for duplicate check) and create.
+    // Only specific fields are needed for duplicate check queries.
+    // Admin can do full read/update/delete.
+    match /volunteers/{id} {
+      allow create: if true;
+      allow read:   if true;   // needed for duplicate ID/phone/email check
+      allow update, delete: if isAdmin();
+    }
+
+    // Contact messages — public create only, admin manages
     match /contactMessages/{id} {
       allow create: if true;
       allow read, update, delete: if isAdmin();
     }
 
-    match /volunteers/{id} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-    }
-
+    // Newsletter — public create only, admin manages
     match /newsletterSubscribers/{id} {
       allow create: if true;
       allow read, update, delete: if isAdmin();

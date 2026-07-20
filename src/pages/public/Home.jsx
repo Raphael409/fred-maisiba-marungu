@@ -320,7 +320,7 @@ function HeroSection({ projectCount, communityCount }) {
               to="/volunteer"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent text-white font-heading font-bold text-sm rounded-full shadow-glow hover:bg-accent-dark hover:scale-105 transition-all duration-200"
             >
-              Get Involved
+              Join Our Movement
               <ArrowRight size={16} />
             </Link>
             <Link
@@ -529,7 +529,7 @@ function ImpactBand() {
               to="/volunteer"
               className="inline-flex items-center gap-2 px-7 py-3 bg-accent text-white font-heading font-semibold text-sm rounded-full shadow-glow hover:bg-accent-dark hover:scale-105 transition-all duration-200"
             >
-              Join the Movement
+              Join Our Movement
               <ArrowRight size={16} />
             </Link>
             <Link
@@ -1102,7 +1102,7 @@ function CTABand() {
 
           {/* Headline */}
           <h2 className="font-heading font-bold text-white mb-5 text-[clamp(2rem,5vw,3.2rem)] leading-tight">
-            Join the Movement for{' '}
+            Join Our Movement for{' '}
             <span className="text-accent">Bogeka Ward</span>
           </h2>
 
@@ -1119,7 +1119,7 @@ function CTABand() {
               to="/volunteer"
               className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-white font-heading font-bold text-sm rounded-full shadow-glow hover:bg-accent-dark hover:scale-105 transition-all duration-200"
             >
-              Volunteer Now
+              Join Our Movement
               <ArrowRight size={17} />
             </Link>
             <Link
@@ -1401,7 +1401,7 @@ export default function Home() {
   const completedCount = projects.filter(p => p.status === 'completed').length
   const communityCount = new Set(projects.map(p => p.location).filter(Boolean)).size
 
-  const residentsTarget = 20000
+  const residentsTarget = 3000
   const youthTarget = 100
   const villagesTarget = communityCount || 15
 

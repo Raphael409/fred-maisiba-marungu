@@ -272,7 +272,7 @@ export default function About() {
               {[
                 { label: 'Ward', value: 'Bogeka' },
                 { label: 'Position', value: 'Ward MCA' },
-                { label: 'Email', value: 'fmarungu2011@gmail.com' },
+                { label: 'Email', value: 'fredmaisiba@gmail.com' },
                 { label: 'Phone', value: '+254 719 562 294' },
               ].map(({ label, value }) => (
                 <div key={label} className="bg-neutral-bg rounded-xl p-4 text-center">
@@ -373,7 +373,7 @@ export default function About() {
               to="/volunteer"
               className="inline-flex items-center gap-2 px-7 py-3 bg-accent text-white font-heading font-semibold text-sm rounded-full shadow-glow hover:bg-accent-dark transition-colors duration-200"
             >
-              Volunteer Now <ArrowRight size={16} />
+              Join Our Movement <ArrowRight size={16} />
             </Link>
             <Link
               to="/manifesto"

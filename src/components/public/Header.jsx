@@ -212,7 +212,7 @@ export default function Header() {
                 to="/volunteer"
                 className="hidden lg:inline-flex px-5 py-2 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors duration-200 shadow-glow"
               >
-                Get Involved
+                Join Our Movement
               </Link>
 
               {/* Mobile hamburger */}
@@ -328,7 +328,7 @@ export default function Header() {
                 onClick={() => setMobileOpen(false)}
                 className="block text-center px-4 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow"
               >
-                Get Involved
+                Join Our Movement
               </Link>
             </div>
 

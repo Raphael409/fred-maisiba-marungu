@@ -29,19 +29,14 @@ export default function NewsDetail() {
   return (
     <div>
       {/* Hero */}
-      {/* Hero image — natural aspect ratio, no crop */}
-      {article.coverImage && (
-        <div className="w-full bg-neutral-dark pt-28 lg:pt-36">
-          <img
-            src={article.coverImage}
-            alt={article.title}
-            className="w-full max-h-[600px] object-contain mx-auto block"
-          />
-        </div>
-      )}
-
-      {/* Title bar */}
-      <section className="relative bg-gradient-to-b from-primary to-secondary py-8 lg:py-10 overflow-hidden">
+      {/* Hero — full bleed, always 16:9 since images are cropped on upload */}
+      <section className="relative bg-gradient-hero pt-32 pb-12 lg:pt-40 lg:pb-16 overflow-hidden min-h-[420px] flex items-end">
+        {article.coverImage && (
+          <div className="absolute inset-0">
+            <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30" />
+          </div>
+        )}
         <div className="container mx-auto px-4 lg:px-8 relative z-10 max-w-3xl">
           <Link to="/news" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-5 transition-colors">
             <ArrowLeft size={15} /> Back to News
@@ -110,7 +105,7 @@ export default function NewsDetail() {
               More News
             </Link>
             <Link to="/volunteer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow">
-              Get Involved
+              Join Our Movement
             </Link>
           </div>
         </div>

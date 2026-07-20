@@ -1,13 +1,15 @@
 // src/pages/public/VolunteerRegistration.jsx
 
-import { addDocument } from '@/firebase/firestore'
+import { addDocument, getDocuments, where } from '@/firebase/firestore'
 import {
   ArrowRight,
   Briefcase,
   Calendar,
+  CalendarDays,
   CheckCircle,
   ClipboardList,
   Clock,
+  CreditCard,
   Heart,
   Mail, MapPin,
   Megaphone,
@@ -45,6 +47,8 @@ const availability = [
 
 const emptyForm = {
   fullName: '',
+  idNumber: '',
+  yearOfBirth: '',
   email: '',
   phone: '',
   village: '',
@@ -65,43 +69,123 @@ export default function VolunteerRegistration() {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }))
   }
 
-  function validate() {
+  function validateFormat() {
     const next = {}
-    if (!form.fullName.trim()) next.fullName = 'Full name is required.'
-    if (!form.email.trim()) next.email = 'Email address is required.'
-    if (!form.phone.trim()) next.phone = 'Phone number is required.'
-    if (!form.village.trim()) next.village = 'Village / location is required.'
-    if (!form.role) next.role = 'Please select a role.'
-    if (!form.availability) next.availability = 'Please select your availability.'
-    if (!form.agree) next.agree = 'You must agree to the terms.'
+    if (!form.fullName.trim())
+      next.fullName = 'Full name is required.'
+
+    if (!form.idNumber.trim())
+      next.idNumber = 'ID number is required.'
+    else if (!/^\d{7,8}$/.test(form.idNumber.trim()))
+      next.idNumber = 'Enter a valid 7-8 digit Kenya national ID number.'
+
+    if (!form.yearOfBirth.trim())
+      next.yearOfBirth = 'Year of birth is required.'
+    else {
+      const yr = parseInt(form.yearOfBirth)
+      if (isNaN(yr) || yr < 1920 || yr > new Date().getFullYear() - 18)
+        next.yearOfBirth = `Enter a valid birth year (you must be 18 or older).`
+    }
+
+    if (!form.phone.trim())
+      next.phone = 'Phone number is required.'
+    else if (!/^[\d\s+\-()]{9,15}$/.test(form.phone.trim()))
+      next.phone = 'Enter a valid phone number.'
+
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+      next.email = 'Enter a valid email address or leave it blank.'
+
+    if (!form.village.trim())
+      next.village = 'Village / location is required.'
+    if (!form.role)
+      next.role = 'Please select a role.'
+    if (!form.availability)
+      next.availability = 'Please select your availability.'
+    if (!form.agree)
+      next.agree = 'You must agree before submitting.'
+
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
+  async function checkDuplicates() {
+    const next = {}
+
+    try {
+      // Check ID number
+      const byId = await getDocuments('volunteers', [
+        where('idNumber', '==', form.idNumber.trim())
+      ])
+      if (byId.length > 0)
+        next.idNumber = 'This ID number is already registered. Each person can only register once.'
+
+      // Check phone
+      const byPhone = await getDocuments('volunteers', [
+        where('phone', '==', form.phone.trim())
+      ])
+      if (byPhone.length > 0)
+        next.phone = 'This phone number is already registered.'
+
+      // Check email only if provided
+      if (form.email.trim()) {
+        const byEmail = await getDocuments('volunteers', [
+          where('email', '==', form.email.trim().toLowerCase())
+        ])
+        if (byEmail.length > 0)
+          next.email = 'This email address is already registered.'
+      }
+    } catch (err) {
+      console.error('Duplicate check error:', err)
+      // If Firestore check fails, don't block submission — log and continue
+    }
+
+    if (Object.keys(next).length > 0) {
+      setErrors(prev => ({ ...prev, ...next }))
+      return false
+    }
+    return true
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!validate()) {
-      toast.error('Please fill in all required fields.')
+
+    // Step 1 — format validation (instant, no network)
+    if (!validateFormat()) {
+      toast.error('Please fix the errors below before submitting.')
       return
     }
+
     setSubmitting(true)
+
+    // Step 2 — duplicate check (requires Firestore query)
+    const noDuplicates = await checkDuplicates()
+    if (!noDuplicates) {
+      setSubmitting(false)
+      toast.error('Some fields already exist in our records — see the errors below.')
+      return
+    }
+
+    // Step 3 — save to Firestore
     try {
       await addDocument('volunteers', {
-        fullName: form.fullName,
-        email: form.email,
-        phone: form.phone,
-        location: form.village,
+        fullName: form.fullName.trim(),
+        idNumber: form.idNumber.trim(),
+        yearOfBirth: form.yearOfBirth.trim(),
+        email: form.email.trim().toLowerCase() || null,
+        phone: form.phone.trim(),
+        location: form.village.trim(),
         areasOfInterest: [form.role],
         availability: form.availability,
-        skillsExperience: form.skills,
+        skillsExperience: form.skills.trim(),
         status: 'new',
         submittedAt: new Date(),
       })
       setSubmitted(true)
       setForm(emptyForm)
       toast.success('Registration successful! The team will contact you soon.')
-    } catch {
-      toast.error('Something went wrong. Please try again.')
+    } catch (err) {
+      console.error('Registration error:', err)
+      toast.error('Registration failed. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -125,11 +209,11 @@ export default function VolunteerRegistration() {
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-5">
             <Heart size={12} className="text-accent" />
             <span className="text-xs font-heading font-semibold uppercase tracking-widest text-white/90">
-              Join the Movement
+              Join Our Movement
             </span>
           </div>
           <h1 className="font-heading font-bold text-3xl lg:text-5xl text-white mb-4">
-            Volunteer for Bogeka Ward
+            Join Our Movement — Bogeka Ward
           </h1>
           <p className="font-accent italic text-xl text-white/80 mb-4">
             &ldquo;Chinsiaga&rdquo; — Together We Move Forward
@@ -153,7 +237,7 @@ export default function VolunteerRegistration() {
               </span>
             </div>
             <h2 className="font-heading font-bold text-3xl lg:text-4xl text-primary mb-3">
-              Volunteer Opportunities
+              Ways to Get Involved
             </h2>
             <p className="text-neutral-muted">
               Choose how you'd like to contribute to the Fred Maisiba campaign.
@@ -192,7 +276,7 @@ export default function VolunteerRegistration() {
                 </span>
               </div>
               <h2 className="font-heading font-bold text-3xl lg:text-4xl text-primary mb-4">
-                Sign Up to Volunteer
+                Register as a Member
               </h2>
               <p className="text-neutral-muted leading-relaxed mb-8">
                 Fill in the form and a member of the Fred Maisiba campaign
@@ -230,11 +314,11 @@ export default function VolunteerRegistration() {
                   +254 719 562 294
                 </a>
                 <a
-                  href="mailto:fmarungu2011@gmail.com"
+                  href="mailto:fredmaisiba@gmail.com"
                   className="flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors font-medium mt-1"
                 >
                   <Mail size={14} />
-                  fmarungu2011@gmail.com
+                  fredmaisiba@gmail.com
                 </a>
               </div>
             </div>
@@ -278,7 +362,7 @@ export default function VolunteerRegistration() {
                       Membership Registration
                     </h3>
                     <p className="text-sm text-neutral-muted mb-5">
-                      All fields marked * are required.
+                      Fields marked * are required. Email is optional.
                     </p>
 
                     {/* Name + Phone */}
@@ -318,11 +402,53 @@ export default function VolunteerRegistration() {
                       </div>
                     </div>
 
+                    {/* ID Number + Year of Birth */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
+                          National ID Number *
+                        </label>
+                        <div className="relative">
+                          <CreditCard size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={form.idNumber}
+                            onChange={e => update('idNumber', e.target.value.replace(/\D/g, ''))}
+                            placeholder="e.g. 12345678"
+                            maxLength={8}
+                            className={`${fieldBase(errors.idNumber)} pl-10`}
+                          />
+                        </div>
+                        {errors.idNumber && <p className="text-xs text-red-500 mt-1">{errors.idNumber}</p>}
+                        <p className="text-[10px] text-neutral-muted mt-1">Each ID can only register once.</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
+                          Year of Birth *
+                        </label>
+                        <div className="relative">
+                          <CalendarDays size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={form.yearOfBirth}
+                            onChange={e => update('yearOfBirth', e.target.value.replace(/\D/g, ''))}
+                            placeholder="e.g. 1985"
+                            maxLength={4}
+                            className={`${fieldBase(errors.yearOfBirth)} pl-10`}
+                          />
+                        </div>
+                        {errors.yearOfBirth && <p className="text-xs text-red-500 mt-1">{errors.yearOfBirth}</p>}
+                      </div>
+                    </div>
+
                     {/* Email + Village */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                          Email Address *
+                          Email Address <span className="text-neutral-muted font-normal">(optional)</span>
                         </label>
                         <div className="relative">
                           <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
@@ -331,10 +457,9 @@ export default function VolunteerRegistration() {
                             value={form.email}
                             onChange={e => update('email', e.target.value)}
                             placeholder="your@email.com"
-                            className={`${fieldBase(errors.email)} pl-10`}
+                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-border text-sm focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-colors"
                           />
                         </div>
-                        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                       </div>
 
                       <div>
@@ -436,12 +561,12 @@ export default function VolunteerRegistration() {
                       {submitting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Submitting...
+                          Checking &amp; Submitting...
                         </>
                       ) : (
                         <>
                           <Send size={16} />
-                          Register as a Volunteer
+                          Register as a Member
                         </>
                       )}
                     </button>

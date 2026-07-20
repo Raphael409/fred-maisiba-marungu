@@ -44,14 +44,14 @@ export default function VideoAddModal({ onClose, onAdded, projects = [] }) {
                 category: category.trim(),
                 projectId: projectId || null,
                 thumbnail: getYouTubeThumbnail(videoId, 'hqdefault'),
-                createdAt: new Date(),
             }
-            const id = await addDocument('gallery', doc)
+            const id = await addDocument('galleryItems', doc)
             toast.success('Video added to gallery!')
             onAdded?.({ id, ...doc })
             onClose()
-        } catch {
-            toast.error('Failed to add video. Please try again.')
+        } catch (err) {
+            console.error('Video add error:', err?.code, err?.message)
+            toast.error(`Failed to add video: ${err?.message || 'Unknown error'}`)
         } finally {
             setSaving(false)
         }

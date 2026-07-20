@@ -365,7 +365,7 @@ export default function Contact() {
               to="/volunteer"
               className="inline-flex items-center gap-2 px-7 py-3 bg-accent text-white font-heading font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors shadow-glow"
             >
-              Volunteer Now <ArrowRight size={15} />
+              Join Our Movement <ArrowRight size={15} />
             </Link>
             <Link
               to="/about"

@@ -9,16 +9,27 @@ export function usePublicGallery() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        setLoading(true)
-        const unsubscribe = subscribeToCollection(
-            COLLECTION,
-            [orderBy('createdAt', 'desc')],
-            (data) => {
-                setGalleryItems(data)
-                setLoading(false)
-            }
-        )
-        return unsubscribe
+        let unsubscribe
+
+        try {
+            unsubscribe = subscribeToCollection(
+                COLLECTION,
+                [orderBy('createdAt', 'desc')],
+                (data) => {
+                    setGalleryItems(data)
+                    setLoading(false)
+                }
+            )
+        } catch (err) {
+            console.error('[usePublicGallery] error:', err?.message)
+            setLoading(false)
+        }
+
+        const timeout = setTimeout(() => setLoading(false), 8000)
+        return () => {
+            clearTimeout(timeout)
+            if (typeof unsubscribe === 'function') unsubscribe()
+        }
     }, [])
 
     return { galleryItems, loading }
