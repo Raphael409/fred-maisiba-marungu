@@ -1,10 +1,9 @@
 // src/firebase/auth.js
-// Thin wrappers around Firebase Auth methods.
+// Firebase authentication helpers used across admin login/logout.
 
 import {
-  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
-  onAuthStateChanged as firebaseOnAuthStateChanged,
+  signInWithEmailAndPassword,
 } from 'firebase/auth'
 import { auth } from './config'
 
@@ -14,8 +13,4 @@ export async function signIn(email, password) {
 
 export async function signOut() {
   return firebaseSignOut(auth)
-}
-
-export function onAuthStateChanged(callback) {
-  return firebaseOnAuthStateChanged(auth, callback)
 }

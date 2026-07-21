@@ -2,66 +2,73 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ─── Helper: check if authenticated ──────────────────────────
     function isAuth() {
       return request.auth != null;
     }
 
+    // ─── Helper: check if admin ───────────────────────────────────
+    // Only call this when user is authenticated.
+    // Uses exists() first to prevent get() from throwing on missing docs.
     function isAdmin() {
-      return isAuth() &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+      return isAuth()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Admin collection
+    // ─── Admins collection ────────────────────────────────────────
     match /admins/{uid} {
-      allow read: if isAuth() && request.auth.uid == uid;
+      allow read:  if isAuth() && request.auth.uid == uid;
       allow write: if isAdmin();
     }
 
-    // Public read, admin write
+    // ─── Content collections (public read, admin write) ───────────
     match /projects/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
     }
 
     match /news/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
     }
 
     match /events/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
     }
 
     match /gallery/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
     }
 
     match /galleryItems/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
     }
 
-    // Volunteers — public can query (for duplicate check) and create.
-    // Only specific fields are needed for duplicate check queries.
-    // Admin can do full read/update/delete.
+    // ─── Volunteers (public read + create, admin manages) ─────────
+    // read: if true — needed for duplicate ID/phone/email checks
+    // create: if true — completely standalone, does NOT call isAdmin()
     match /volunteers/{id} {
-      allow create: if true;
-      allow read:   if true;   // needed for duplicate ID/phone/email check
-      allow update, delete: if isAdmin();
+      allow read:             if true;
+      allow create:           if true;
+      allow update, delete:   if isAdmin();
     }
 
-    // Contact messages — public create only, admin manages
+    // ─── Contact messages (public create only) ────────────────────
+    // create: if true — standalone, does NOT call isAdmin()
     match /contactMessages/{id} {
-      allow create: if true;
+      allow create:           if true;
       allow read, update, delete: if isAdmin();
     }
 
-    // Newsletter — public create only, admin manages
+    // ─── Newsletter subscribers (public create only) ──────────────
+    // create: if true — standalone, does NOT call isAdmin()
+    // This is the one that was failing. Completely isolated from isAdmin().
     match /newsletterSubscribers/{id} {
-      allow create: if true;
+      allow create:           if true;
       allow read, update, delete: if isAdmin();
     }
 

@@ -8,7 +8,6 @@ import {
   CalendarDays,
   CheckCircle,
   ClipboardList,
-  Clock,
   CreditCard,
   Heart,
   Mail, MapPin,
@@ -18,9 +17,9 @@ import {
   Smartphone,
   Truck,
   User,
-  Users,
+  Users
 } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 
@@ -61,118 +60,124 @@ const emptyForm = {
 export default function VolunteerRegistration() {
   const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
+  const [fieldValid, setFieldValid] = useState({})
+  const [checking, setChecking] = useState({}) // per-field async check state
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
+  // Update field value and clear error on change
   function update(field, value) {
     setForm(prev => ({ ...prev, [field]: value }))
+    // Clear error as user types
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }))
+    // Clear valid state while typing
+    if (fieldValid[field]) setFieldValid(prev => ({ ...prev, [field]: false }))
   }
 
-  function validateFormat() {
-    const next = {}
-    if (!form.fullName.trim())
-      next.fullName = 'Full name is required.'
+  // Validate a single field — called on blur
+  const validateField = useCallback(async (field, value) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    let error = null
+    let valid = false
 
-    if (!form.idNumber.trim())
-      next.idNumber = 'ID number is required.'
-    else if (!/^\d{7,8}$/.test(form.idNumber.trim()))
-      next.idNumber = 'Enter a valid 7-8 digit Kenya national ID number.'
+    switch (field) {
+      case 'fullName':
+        if (!value.trim()) error = 'Full name is required.'
+        else if (value.trim().length < 3) error = 'Name must be at least 3 characters.'
+        else valid = true
+        break
 
-    if (!form.yearOfBirth.trim())
-      next.yearOfBirth = 'Year of birth is required.'
-    else {
-      const yr = parseInt(form.yearOfBirth)
-      if (isNaN(yr) || yr < 1920 || yr > new Date().getFullYear() - 18)
-        next.yearOfBirth = `Enter a valid birth year (you must be 18 or older).`
+      case 'idNumber':
+        if (!value.trim()) { error = 'ID number is required.'; break }
+        if (!/^\d{7,8}$/.test(value.trim())) { error = 'Enter a valid 7-8 digit Kenya national ID.'; break }
+        // Async duplicate check
+        setChecking(prev => ({ ...prev, idNumber: true }))
+        try {
+          const existing = await getDocuments('volunteers', [where('idNumber', '==', value.trim())])
+          if (existing.length > 0) error = 'This ID number is already registered.'
+          else valid = true
+        } catch { valid = true } // don't block on network error
+        setChecking(prev => ({ ...prev, idNumber: false }))
+        break
+
+      case 'yearOfBirth':
+        if (!value.trim()) { error = 'Year of birth is required.'; break }
+        const yr = parseInt(value)
+        if (isNaN(yr) || yr < 1920) { error = 'Enter a valid year of birth.'; break }
+        if (yr > new Date().getFullYear() - 18) { error = 'You must be 18 or older to register.'; break }
+        valid = true
+        break
+
+      case 'phone':
+        if (!value.trim()) { error = 'Phone number is required.'; break }
+        if (value.replace(/\D/g, '').length < 9) { error = 'Enter at least 9 digits after +254.'; break }
+        // Async duplicate check
+        const fullPhone = '+254' + value.replace(/\D/g, '')
+        setChecking(prev => ({ ...prev, phone: true }))
+        try {
+          const existing = await getDocuments('volunteers', [where('phone', '==', fullPhone)])
+          if (existing.length > 0) error = 'This phone number is already registered.'
+          else valid = true
+        } catch { valid = true }
+        setChecking(prev => ({ ...prev, phone: false }))
+        break
+
+      case 'email':
+        if (!value.trim()) { valid = true; break } // optional
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) { error = 'Enter a valid email address.'; break }
+        // Async duplicate check
+        setChecking(prev => ({ ...prev, email: true }))
+        try {
+          const existing = await getDocuments('volunteers', [where('email', '==', value.trim().toLowerCase())])
+          if (existing.length > 0) error = 'This email is already registered.'
+          else valid = true
+        } catch { valid = true }
+        setChecking(prev => ({ ...prev, email: false }))
+        break
+
+      case 'village':
+        if (!value.trim()) error = 'Village / location is required.'
+        else valid = true
+        break
+
+      case 'role':
+        if (!value) error = 'Please select a role.'
+        else valid = true
+        break
+
+      case 'availability':
+        if (!value) error = 'Please select your availability.'
+        else valid = true
+        break
+
+      default:
+        valid = true
     }
 
-    if (!form.phone.trim())
-      next.phone = 'Phone number is required.'
-    else if (!/^[\d\s+\-()]{9,15}$/.test(form.phone.trim()))
-      next.phone = 'Enter a valid phone number.'
+    setErrors(prev => ({ ...prev, [field]: error }))
+    setFieldValid(prev => ({ ...prev, [field]: valid }))
+  }, [])
 
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
-      next.email = 'Enter a valid email address or leave it blank.'
-
-    if (!form.village.trim())
-      next.village = 'Village / location is required.'
-    if (!form.role)
-      next.role = 'Please select a role.'
-    if (!form.availability)
-      next.availability = 'Please select your availability.'
-    if (!form.agree)
-      next.agree = 'You must agree before submitting.'
-
-    setErrors(next)
-    return Object.keys(next).length === 0
-  }
-
-  async function checkDuplicates() {
-    const next = {}
-
-    try {
-      // Check ID number
-      const byId = await getDocuments('volunteers', [
-        where('idNumber', '==', form.idNumber.trim())
-      ])
-      if (byId.length > 0)
-        next.idNumber = 'This ID number is already registered. Each person can only register once.'
-
-      // Check phone
-      const byPhone = await getDocuments('volunteers', [
-        where('phone', '==', form.phone.trim())
-      ])
-      if (byPhone.length > 0)
-        next.phone = 'This phone number is already registered.'
-
-      // Check email only if provided
-      if (form.email.trim()) {
-        const byEmail = await getDocuments('volunteers', [
-          where('email', '==', form.email.trim().toLowerCase())
-        ])
-        if (byEmail.length > 0)
-          next.email = 'This email address is already registered.'
-      }
-    } catch (err) {
-      console.error('Duplicate check error:', err)
-      // If Firestore check fails, don't block submission — log and continue
-    }
-
-    if (Object.keys(next).length > 0) {
-      setErrors(prev => ({ ...prev, ...next }))
-      return false
-    }
-    return true
-  }
+  // All required fields must be valid before submit is enabled
+  const requiredFields = ['fullName', 'idNumber', 'yearOfBirth', 'phone', 'village', 'role', 'availability']
+  const isFormReady = requiredFields.every(f => fieldValid[f] === true)
+    && form.agree
+    && !Object.values(checking).some(Boolean)
 
   async function handleSubmit(e) {
     e.preventDefault()
-
-    // Step 1 — format validation (instant, no network)
-    if (!validateFormat()) {
-      toast.error('Please fix the errors below before submitting.')
-      return
-    }
+    if (!isFormReady || submitting) return
 
     setSubmitting(true)
-
-    // Step 2 — duplicate check (requires Firestore query)
-    const noDuplicates = await checkDuplicates()
-    if (!noDuplicates) {
-      setSubmitting(false)
-      toast.error('Some fields already exist in our records — see the errors below.')
-      return
-    }
-
-    // Step 3 — save to Firestore
     try {
+      const fullPhone = '+254' + form.phone.replace(/\D/g, '')
       await addDocument('volunteers', {
         fullName: form.fullName.trim(),
         idNumber: form.idNumber.trim(),
         yearOfBirth: form.yearOfBirth.trim(),
         email: form.email.trim().toLowerCase() || null,
-        phone: form.phone.trim(),
+        phone: fullPhone,
         location: form.village.trim(),
         areasOfInterest: [form.role],
         availability: form.availability,
@@ -182,6 +187,9 @@ export default function VolunteerRegistration() {
       })
       setSubmitted(true)
       setForm(emptyForm)
+      setErrors({})
+      setTouched({})
+      setFieldValid({})
       toast.success('Registration successful! The team will contact you soon.')
     } catch (err) {
       console.error('Registration error:', err)
@@ -191,9 +199,35 @@ export default function VolunteerRegistration() {
     }
   }
 
-  const fieldBase = (hasError) =>
-    `w-full px-4 py-3 rounded-xl border text-sm bg-white focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-colors ${hasError ? 'border-red-400' : 'border-neutral-border'
-    }`
+  // Field styling based on validation state
+  function fieldClass(field, extra = '') {
+    const base = `w-full pr-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all ${extra}`
+    if (checking[field]) return `${base} border-neutral-border bg-white focus:border-secondary focus:ring-secondary/20`
+    if (errors[field]) return `${base} border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100`
+    if (fieldValid[field]) return `${base} border-success bg-success/5 focus:border-success focus:ring-success/20`
+    return `${base} border-neutral-border bg-white focus:border-secondary focus:ring-secondary/20`
+  }
+
+  // Inline feedback shown below each field
+  function FieldFeedback({ field }) {
+    if (checking[field]) return (
+      <p className="flex items-center gap-1.5 text-xs text-secondary mt-1.5">
+        <span className="w-3 h-3 border-2 border-secondary/30 border-t-secondary rounded-full animate-spin inline-block" />
+        Checking...
+      </p>
+    )
+    if (errors[field]) return (
+      <p className="flex items-center gap-1 text-xs text-red-600 mt-1.5">
+        <span className="text-red-500">✕</span> {errors[field]}
+      </p>
+    )
+    if (fieldValid[field] && touched[field]) return (
+      <p className="flex items-center gap-1 text-xs text-success mt-1.5">
+        <CheckCircle size={12} /> Looks good
+      </p>
+    )
+    return null
+  }
 
   return (
     <div>
@@ -361,45 +395,65 @@ export default function VolunteerRegistration() {
                     <h3 className="font-heading font-bold text-xl text-primary mb-1">
                       Membership Registration
                     </h3>
-                    <p className="text-sm text-neutral-muted mb-5">
+                    <p className="text-sm text-neutral-muted mb-2">
                       Fields marked * are required. Email is optional.
                     </p>
 
-                    {/* Name + Phone */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                          Full Name *
-                        </label>
-                        <div className="relative">
-                          <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
-                          <input
-                            type="text"
-                            value={form.fullName}
-                            onChange={e => update('fullName', e.target.value)}
-                            placeholder="Your full name"
-                            className={`${fieldBase(errors.fullName)} pl-10`}
-                          />
-                        </div>
-                        {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
-                      </div>
+                    {/* Progress indicator */}
+                    <div className="flex gap-1 mb-4">
+                      {requiredFields.map(f => (
+                        <div key={f} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${errors[f] ? 'bg-red-400' :
+                            fieldValid[f] ? 'bg-success' :
+                              'bg-neutral-border'
+                          }`} />
+                      ))}
+                    </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                          Phone Number *
-                        </label>
-                        <div className="relative">
-                          <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
-                          <input
-                            type="tel"
-                            value={form.phone}
-                            onChange={e => update('phone', e.target.value)}
-                            placeholder="+254 7XX XXX XXX"
-                            className={`${fieldBase(errors.phone)} pl-10`}
-                          />
-                        </div>
-                        {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                    {/* Full Name */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
+                        Full Name *
+                      </label>
+                      <div className="relative">
+                        <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
+                        <input
+                          type="text"
+                          value={form.fullName}
+                          onChange={e => update('fullName', e.target.value)}
+                          onBlur={e => validateField('fullName', e.target.value)}
+                          placeholder="Your full name"
+                          className={`${fieldClass('fullName', 'pl-10')}`}
+                        />
                       </div>
+                      <FieldFeedback field="fullName" />
+                    </div>
+
+                    {/* Phone — Kenya flag + +254 prefix */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
+                        Phone Number *
+                      </label>
+                      <div className="flex">
+                        {/* Country prefix badge */}
+                        <div className="flex items-center gap-1.5 px-3 py-3 bg-neutral-bg border border-r-0 border-neutral-border rounded-l-xl flex-shrink-0">
+                          <span className="text-base leading-none">🇰🇪</span>
+                          <span className="text-sm font-semibold text-neutral-dark">+254</span>
+                        </div>
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          value={form.phone}
+                          onChange={e => update('phone', e.target.value.replace(/\D/g, ''))}
+                          onBlur={e => validateField('phone', e.target.value)}
+                          placeholder="7XX XXX XXX"
+                          maxLength={9}
+                          className={`flex-1 px-4 py-3 rounded-r-xl border text-sm focus:outline-none focus:ring-2 transition-all ${errors['phone'] ? 'border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100' :
+                              fieldValid['phone'] ? 'border-success bg-success/5 focus:border-success focus:ring-success/20' :
+                                'border-neutral-border bg-white focus:border-secondary focus:ring-secondary/20'
+                            }`}
+                        />
+                      </div>
+                      <FieldFeedback field="phone" />
                     </div>
 
                     {/* ID Number + Year of Birth */}
@@ -415,13 +469,16 @@ export default function VolunteerRegistration() {
                             inputMode="numeric"
                             value={form.idNumber}
                             onChange={e => update('idNumber', e.target.value.replace(/\D/g, ''))}
+                            onBlur={e => validateField('idNumber', e.target.value)}
                             placeholder="e.g. 12345678"
                             maxLength={8}
-                            className={`${fieldBase(errors.idNumber)} pl-10`}
+                            className={`${fieldClass('idNumber', 'pl-10')}`}
                           />
                         </div>
-                        {errors.idNumber && <p className="text-xs text-red-500 mt-1">{errors.idNumber}</p>}
-                        <p className="text-[10px] text-neutral-muted mt-1">Each ID can only register once.</p>
+                        <FieldFeedback field="idNumber" />
+                        {!touched.idNumber && (
+                          <p className="text-[10px] text-neutral-muted mt-1">Each ID can only register once.</p>
+                        )}
                       </div>
 
                       <div>
@@ -435,12 +492,13 @@ export default function VolunteerRegistration() {
                             inputMode="numeric"
                             value={form.yearOfBirth}
                             onChange={e => update('yearOfBirth', e.target.value.replace(/\D/g, ''))}
+                            onBlur={e => validateField('yearOfBirth', e.target.value)}
                             placeholder="e.g. 1985"
                             maxLength={4}
-                            className={`${fieldBase(errors.yearOfBirth)} pl-10`}
+                            className={`${fieldClass('yearOfBirth', 'pl-10')}`}
                           />
                         </div>
-                        {errors.yearOfBirth && <p className="text-xs text-red-500 mt-1">{errors.yearOfBirth}</p>}
+                        <FieldFeedback field="yearOfBirth" />
                       </div>
                     </div>
 
@@ -448,7 +506,7 @@ export default function VolunteerRegistration() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                          Email Address <span className="text-neutral-muted font-normal">(optional)</span>
+                          Email <span className="text-neutral-muted font-normal">(optional)</span>
                         </label>
                         <div className="relative">
                           <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
@@ -456,10 +514,12 @@ export default function VolunteerRegistration() {
                             type="email"
                             value={form.email}
                             onChange={e => update('email', e.target.value)}
+                            onBlur={e => validateField('email', e.target.value)}
                             placeholder="your@email.com"
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-border text-sm focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-colors"
+                            className={`${fieldClass('email', 'pl-10')}`}
                           />
                         </div>
+                        <FieldFeedback field="email" />
                       </div>
 
                       <div>
@@ -472,11 +532,12 @@ export default function VolunteerRegistration() {
                             type="text"
                             value={form.village}
                             onChange={e => update('village', e.target.value)}
+                            onBlur={e => validateField('village', e.target.value)}
                             placeholder="Your village in Bogeka Ward"
-                            className={`${fieldBase(errors.village)} pl-10`}
+                            className={`${fieldClass('village', 'pl-10')}`}
                           />
                         </div>
-                        {errors.village && <p className="text-xs text-red-500 mt-1">{errors.village}</p>}
+                        <FieldFeedback field="village" />
                       </div>
                     </div>
 
@@ -484,92 +545,110 @@ export default function VolunteerRegistration() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                          Volunteer Role *
+                          Area of Involvement *
                         </label>
                         <select
                           value={form.role}
-                          onChange={e => update('role', e.target.value)}
-                          className={fieldBase(errors.role)}
+                          onChange={e => { update('role', e.target.value); validateField('role', e.target.value) }}
+                          onBlur={e => validateField('role', e.target.value)}
+                          className={`w-full px-4 py-3 rounded-xl border text-sm bg-white focus:outline-none focus:ring-2 transition-all ${errors['role'] ? 'border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100' :
+                              fieldValid['role'] ? 'border-success bg-success/5 focus:border-success focus:ring-success/20' :
+                                'border-neutral-border focus:border-secondary focus:ring-secondary/20'
+                            }`}
                         >
                           <option value="">Select a role</option>
                           {roles.map(r => (
                             <option key={r.value} value={r.value}>{r.value}</option>
                           ))}
                         </select>
-                        {errors.role && <p className="text-xs text-red-500 mt-1">{errors.role}</p>}
+                        <FieldFeedback field="role" />
                       </div>
 
                       <div>
                         <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
                           Availability *
                         </label>
-                        <div className="relative">
-                          <Clock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
-                          <select
-                            value={form.availability}
-                            onChange={e => update('availability', e.target.value)}
-                            className={`${fieldBase(errors.availability)} pl-10`}
-                          >
-                            <option value="">When are you free?</option>
-                            {availability.map(a => (
-                              <option key={a} value={a}>{a}</option>
-                            ))}
-                          </select>
-                        </div>
-                        {errors.availability && <p className="text-xs text-red-500 mt-1">{errors.availability}</p>}
+                        <select
+                          value={form.availability}
+                          onChange={e => { update('availability', e.target.value); validateField('availability', e.target.value) }}
+                          onBlur={e => validateField('availability', e.target.value)}
+                          className={`w-full px-4 py-3 rounded-xl border text-sm bg-white focus:outline-none focus:ring-2 transition-all ${errors['availability'] ? 'border-red-400 bg-red-50 focus:border-red-400 focus:ring-red-100' :
+                              fieldValid['availability'] ? 'border-success bg-success/5 focus:border-success focus:ring-success/20' :
+                                'border-neutral-border focus:border-secondary focus:ring-secondary/20'
+                            }`}
+                        >
+                          <option value="">When are you free?</option>
+                          {availability.map(a => (
+                            <option key={a} value={a}>{a}</option>
+                          ))}
+                        </select>
+                        <FieldFeedback field="availability" />
                       </div>
                     </div>
 
                     {/* Skills */}
                     <div>
                       <label className="block text-xs font-semibold text-neutral-dark mb-1.5">
-                        Skills / Experience (optional)
+                        Skills / Experience <span className="text-neutral-muted font-normal">(optional)</span>
                       </label>
                       <textarea
                         rows={3}
                         value={form.skills}
                         onChange={e => update('skills', e.target.value)}
-                        placeholder="Tell us about any relevant skills, experience, or why you want to volunteer..."
-                        className="w-full px-4 py-3 rounded-xl border border-neutral-border text-sm focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-colors resize-none"
+                        placeholder="Any relevant skills, experience, or why you want to join..."
+                        className="w-full px-4 py-3 rounded-xl border border-neutral-border bg-white text-sm focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-colors resize-none"
                       />
                     </div>
 
                     {/* Agreement */}
                     <div>
-                      <label className="flex items-start gap-3 cursor-pointer">
+                      <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                           type="checkbox"
                           checked={form.agree}
                           onChange={e => update('agree', e.target.checked)}
-                          className="mt-0.5 w-4 h-4 rounded border-neutral-border text-secondary focus:ring-secondary flex-shrink-0"
+                          className="mt-0.5 w-4 h-4 rounded border-neutral-border text-secondary focus:ring-secondary flex-shrink-0 cursor-pointer"
                         />
-                        <span className="text-xs text-neutral-muted leading-relaxed">
-                          I agree to be contacted by the Fred Maisiba Marungu campaign team
-                          regarding my volunteer registration. My information will be used
-                          solely for campaign coordination purposes. *
+                        <span className="text-xs text-neutral-muted leading-relaxed group-hover:text-neutral-dark transition-colors">
+                          I agree to be contacted by the Fred Maisiba Marungu campaign team.
+                          My information will be used solely for campaign coordination. *
                         </span>
                       </label>
-                      {errors.agree && <p className="text-xs text-red-500 mt-1">{errors.agree}</p>}
+                      {!form.agree && touched.agree && (
+                        <p className="text-xs text-red-500 mt-1">You must agree before submitting.</p>
+                      )}
                     </div>
 
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-secondary text-white font-heading font-bold text-sm rounded-xl hover:bg-secondary-dark disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-md"
-                    >
-                      {submitting ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Checking &amp; Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <Send size={16} />
-                          Register as a Member
-                        </>
+                    {/* Submit button — colour changes based on readiness */}
+                    <div className="pt-1">
+                      {!isFormReady && (
+                        <p className="text-xs text-neutral-muted text-center mb-2">
+                          {Object.values(checking).some(Boolean)
+                            ? '⏳ Checking your details...'
+                            : '✏️ Complete all required fields to enable registration'}
+                        </p>
                       )}
-                    </button>
+                      <button
+                        type="submit"
+                        disabled={!isFormReady || submitting}
+                        className={`w-full flex items-center justify-center gap-2 px-6 py-4 font-heading font-bold text-sm rounded-xl transition-all duration-300 shadow-md ${isFormReady && !submitting
+                            ? 'bg-secondary text-white hover:bg-secondary-dark cursor-pointer shadow-card-hover'
+                            : 'bg-neutral-border text-neutral-muted cursor-not-allowed'
+                          }`}
+                      >
+                        {submitting ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <Send size={16} />
+                            Register as a Member
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </form>
                 )}
               </div>

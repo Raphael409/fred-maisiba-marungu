@@ -187,13 +187,13 @@ export default function Footer() {
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-2">
                 <div className="relative">
-                  <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-on-dark-muted" />
+                  <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-muted" />
                   <input
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Your email address"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/8 border border-white/15 text-white placeholder-white/40 text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-white/20 text-neutral-dark placeholder-neutral-muted text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors"
                   />
                 </div>
                 <button

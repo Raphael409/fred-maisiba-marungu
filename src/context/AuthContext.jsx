@@ -1,6 +1,10 @@
 // src/context/AuthContext.jsx
-import { onAuthStateChanged } from '@/firebase/auth'
-import { getDocument } from '@/firebase/firestore'
+// Provides auth state (user, isAdmin, loading) to the entire app.
+// isAdmin checks the admins/{uid} Firestore document for role == "admin".
+
+import { auth, db } from '@/firebase/config'
+import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const AuthContext = createContext(null)
@@ -11,32 +15,20 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(async (firebaseUser) => {
-      console.log('--- Auth state changed ---')
-      console.log('firebaseUser:', firebaseUser?.email || 'null')
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser)
 
       if (firebaseUser) {
-        console.log('UID:', firebaseUser.uid)
-        console.log('Looking for admins/' + firebaseUser.uid + ' in Firestore...')
-
         try {
-          const adminDoc = await getDocument('admins', firebaseUser.uid)
-          console.log('adminDoc result:', adminDoc)
-          console.log('isAdmin will be:', !!adminDoc)
-          setUser(firebaseUser)
-          setIsAdmin(!!adminDoc)
-        } catch (err) {
-          console.error('Error fetching admin doc:', err)
-          setUser(firebaseUser)
+          const adminDoc = await getDoc(doc(db, 'admins', firebaseUser.uid))
+          setIsAdmin(adminDoc.exists() && adminDoc.data()?.role === 'admin')
+        } catch {
           setIsAdmin(false)
         }
       } else {
-        console.log('No user signed in')
-        setUser(null)
         setIsAdmin(false)
       }
 
-      console.log('Setting loading to false')
       setLoading(false)
     })
 
@@ -51,7 +43,7 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider')
-  return ctx
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth must be used within AuthProvider')
+  return context
 }
