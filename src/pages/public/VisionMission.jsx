@@ -125,7 +125,7 @@ export default function VisionMission() {
             Vision &amp; Mission
           </h1>
           <p className="font-accent italic text-xl text-white/80 mb-6">
-            &ldquo;Chinsiaga&rdquo; — Together We Move Forward
+            &ldquo;Chinsiaga&rdquo; — Mtu Wa Watu
           </p>
           <p className="text-white/70 max-w-2xl mx-auto leading-relaxed">
             A clear direction for Bogeka Ward, grounded in real community
