@@ -89,27 +89,15 @@ function PillarCard({ icon: Icon, title, shortTerm, midTerm, longTerm, index }) 
         <h3 className="font-heading font-bold text-lg text-white">{title}</h3>
       </div>
 
-      {/* Timeline goals */}
-      <div className="p-6 space-y-4">
-        {[
-          { label: 'First 100 Days', text: shortTerm, color: 'bg-accent' },
-          { label: 'Year 1',         text: midTerm,   color: 'bg-secondary' },
-          { label: 'Full Term',      text: longTerm,  color: 'bg-primary' },
-        ].map(({ label, text, color }) => (
-          <div key={label} className="flex gap-3">
-            <div className="flex flex-col items-center flex-shrink-0 mt-1">
-              <div className={`w-2.5 h-2.5 rounded-full ${color} flex-shrink-0`} />
-              <div className="w-0.5 flex-1 bg-neutral-border mt-1" />
-            </div>
-            <div className="pb-2">
-              <p className="text-[10px] font-heading font-bold uppercase tracking-widest text-neutral-muted mb-0.5">
-                {label}
-              </p>
-              <p className="text-sm text-neutral-dark leading-relaxed">{text}</p>
-            </div>
-          </div>
+      {/* Goals — bullet list, no duration labels */}
+      <ul className="p-6 space-y-3">
+        {[shortTerm, midTerm, longTerm].map((text, i) => (
+          <li key={i} className="flex items-start gap-3">
+            <span className="w-2 h-2 rounded-full bg-accent flex-shrink-0 mt-1.5" />
+            <p className="text-sm text-neutral-dark leading-relaxed">{text}</p>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }

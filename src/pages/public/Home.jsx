@@ -1,40 +1,25 @@
 // src/pages/public/Home.jsx
 // Homepage — complete with all sections.
 
-import LoadingSpinner from '@/components/shared/LoadingSpinner'
-import { useFeaturedProjects } from '@/hooks/useFeaturedProjects'
-import { useProjects } from '@/hooks/useProjects'
-import { usePublicEvents } from '@/hooks/usePublicEvents'
-import { usePublicNews } from '@/hooks/usePublicNews'
-import { formatDate, formatDateRange, isUpcoming } from '@/utils/formatDate'
+import { Link }              from 'react-router-dom'
 import {
-  ArrowRight,
-  CalendarDays,
-  CheckCircle,
-  ChevronLeft, ChevronRight,
-  Clock,
-  Eye,
-  FolderKanban,
-  GraduationCap,
-  HardHat,
-  Heart, MapPin,
-  Newspaper,
-  Quote,
-  Sparkles,
-  Sprout,
-  Stethoscope,
-  Tag,
-  Users,
-  Wifi
+  ArrowRight, CheckCircle, FolderKanban, Users, Heart, MapPin, Tag, Eye,
+  Calendar, Clock, Newspaper, CalendarDays, Quote, ChevronLeft, ChevronRight,
+  GraduationCap, Stethoscope, Sprout, Wifi, HardHat, Sparkles,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useRef, useEffect, useState } from 'react'
+import { useProjects }         from '@/hooks/useProjects'
+import { usePublicNews }       from '@/hooks/usePublicNews'
+import { usePublicEvents }     from '@/hooks/usePublicEvents'
+import { useFeaturedProjects } from '@/hooks/useFeaturedProjects'
+import LoadingSpinner          from '@/components/shared/LoadingSpinner'
+import { formatDate, formatDateRange, isUpcoming } from '@/utils/formatDate'
 
 // ─── Count-up hook ──────────────────────────────────────────────────────────
 function useCountUp(target, duration = 1800) {
-  const [value, setValue] = useState(0)
-  const ref = useRef(null)
-  const hasRun = useRef(false)
+  const [value, setValue]   = useState(0)
+  const ref                 = useRef(null)
+  const hasRun              = useRef(false)
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -48,9 +33,9 @@ function useCountUp(target, duration = 1800) {
         if (entry.isIntersecting && !hasRun.current) {
           hasRun.current = true
           const start = performance.now()
-          const tick = (now) => {
+          const tick  = (now) => {
             const progress = Math.min((now - start) / duration, 1)
-            const eased = 1 - Math.pow(1 - progress, 3)
+            const eased    = 1 - Math.pow(1 - progress, 3)
             setValue(Math.round(eased * target))
             if (progress < 1) requestAnimationFrame(tick)
           }
@@ -116,31 +101,31 @@ function StatCard({ icon: Icon, value, suffix = '+', label, description, index }
 function StatsSection({ projectCount, residentsCount, youthCount, villagesCount }) {
   const stats = [
     {
-      icon: FolderKanban,
-      value: projectCount,
-      suffix: '+',
-      label: 'Community Projects',
+      icon:        FolderKanban,
+      value:       projectCount,
+      suffix:      '+',
+      label:       'Community Projects',
       description: 'Completed projects delivering real, measurable impact across our region.',
     },
     {
-      icon: Users,
-      value: residentsCount,
-      suffix: '+',
-      label: 'Residents Reached',
+      icon:        Users,
+      value:       residentsCount,
+      suffix:      '+',
+      label:       'Residents Reached',
       description: 'People whose lives have been directly improved through our community work.',
     },
     {
-      icon: Heart,
-      value: youthCount,
-      suffix: '+',
-      label: 'Youth Empowered',
+      icon:        Heart,
+      value:       youthCount,
+      suffix:      '+',
+      label:       'Youth Empowered',
       description: 'Young people supported through education, skills, and opportunity programmes.',
     },
     {
-      icon: MapPin,
-      value: villagesCount,
-      suffix: '+',
-      label: 'Villages Supported',
+      icon:        MapPin,
+      value:       villagesCount,
+      suffix:      '+',
+      label:       'Villages Supported',
       description: 'Communities across the region that have benefited from our outreach and projects.',
     },
   ]
@@ -343,7 +328,7 @@ function FeaturedProjectsSection() {
 
   const statusColors = {
     completed: 'bg-success/10 text-success border-success/20',
-    ongoing: 'bg-accent/10 text-accent border-accent/20',
+    ongoing:   'bg-accent/10 text-accent border-accent/20',
   }
 
   return (
@@ -426,8 +411,9 @@ function FeaturedProjectsSection() {
 
                   {/* Status badge */}
                   <div className="absolute top-3 right-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border capitalize ${statusColors[project.status] || statusColors.completed
-                      }`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border capitalize ${
+                      statusColors[project.status] || statusColors.completed
+                    }`}>
                       {project.status}
                     </span>
                   </div>
@@ -476,34 +462,34 @@ function FeaturedProjectsSection() {
 // ─── Vision & Priorities Section ─────────────────────────────────────────────
 const pillars = [
   {
-    icon: GraduationCap,
-    title: 'Education',
-    description: 'Building and equipping schools, supporting bursaries for bright students from Bogeka Ward who cannot afford secondary and higher education.',
+    icon:        Sprout,
+    title:       'Agriculture & Economic Empowerment',
+    description: 'Supporting "Kilimo Biashara" ventures, promoting value addition, and encouraging youth and women to participate in agriculture as a business enterprise.',
   },
   {
-    icon: Stethoscope,
-    title: 'Healthcare',
-    description: 'Improving access to quality healthcare through equipping dispensaries, supporting community health workers, and facilitating medical outreach.',
+    icon:        GraduationCap,
+    title:       'Education & Skills Development',
+    description: 'Strengthening access to education, supporting marginalized learners, promoting vocational and technical skills, and championing entrepreneurship for youth employment.',
   },
   {
-    icon: Sparkles,
-    title: 'Youth Empowerment',
-    description: 'Creating opportunities for youth through skills training, sports facilities, and funding youth-led initiatives that build livelihoods.',
+    icon:        Stethoscope,
+    title:       'Healthcare & Social Welfare',
+    description: 'Advocating for accessible, quality healthcare, supporting maternal and child health initiatives, and strengthening community awareness on preventive healthcare.',
   },
   {
-    icon: HardHat,
-    title: 'Infrastructure',
-    description: 'Opening and grading roads, installing water points, and building community facilities that improve daily life for every household.',
+    icon:        HardHat,
+    title:       'Roads, Water & Infrastructure',
+    description: 'Prioritising improvement of local roads, advocating for clean piped water, and promoting appropriate lighting to improve security and economic activity.',
   },
   {
-    icon: Sprout,
-    title: 'Agriculture',
-    description: 'Supporting farmers with inputs, market linkages, and irrigation infrastructure so that agriculture becomes a reliable source of income.',
+    icon:        Heart,
+    title:       'Youth & Women Empowerment',
+    description: 'Expanding opportunities for youth entrepreneurship, supporting women-led enterprises, and encouraging inclusive participation in local development programs.',
   },
   {
-    icon: Wifi,
-    title: 'Digital Transformation',
-    description: 'Connecting Bogeka Ward to the digital economy through community WiFi hotspots, digital literacy training, and e-government services.',
+    icon:        Wifi,
+    title:       'Accountable Leadership',
+    description: 'Promoting transparency in development planning, maintaining regular community consultations, and tracking projects with open progress communication to residents.',
   },
 ]
 
@@ -566,10 +552,10 @@ function VisionPrioritiesSection() {
 
 // ─── News & Events Section ────────────────────────────────────────────────────
 function NewsEventsSection() {
-  const { news, loading: newsLoading } = usePublicNews()
+  const { news,   loading: newsLoading }   = usePublicNews()
   const { events, loading: eventsLoading } = usePublicEvents()
 
-  const latestNews = news.slice(0, 3)
+  const latestNews     = news.slice(0, 3)
   const upcomingEvents = events.filter(e => isUpcoming(e.endDateTime)).slice(0, 3)
 
   return (
@@ -711,21 +697,21 @@ function NewsEventsSection() {
 // Replace placeholder quotes with real community testimonials once collected.
 const testimonials = [
   {
-    quote: '[Placeholder: A genuine quote about how a project changed daily life in Bogeka — 2-3 sentences.]',
-    name: '[Resident Name]',
-    role: '[Role / Village, Bogeka Ward]',
+    quote: '"Leadership should translate plans into measurable improvements in people\'s lives. That is the standard I hold myself to every day."',
+    name:  'Hon. Fred Maisiba Marungu',
+    role:  'MCA Candidate, Bogeka Ward',
     avatar: '',
   },
   {
-    quote: '[Placeholder: A quote from a community leader about Fred Maisiba\'s leadership and accountability.]',
-    name: '[Resident Name]',
-    role: '[Role / Village, Bogeka Ward]',
+    quote: '[Placeholder: A genuine quote from a Bogeka Ward resident about Fred\'s work in the community — 2-3 sentences. Replace with a real testimonial.]',
+    name:  '[Resident Name]',
+    role:  '[Village, Bogeka Ward]',
     avatar: '',
   },
   {
-    quote: '[Placeholder: A quote from a youth beneficiary of a campaign programme.]',
-    name: '[Resident Name]',
-    role: '[Role / Village, Bogeka Ward]',
+    quote: '[Placeholder: A quote from a community leader or farmer about the impact of Fred\'s programmes. Replace with a real testimonial.]',
+    name:  '[Community Leader Name]',
+    role:  '[Role / Village, Bogeka Ward]',
     avatar: '',
   },
 ]
@@ -877,8 +863,9 @@ function TestimonialsSection() {
               <button
                 key={i}
                 onClick={() => setIndex(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${i === index ? 'w-7 bg-secondary' : 'w-2 bg-neutral-border hover:bg-accent/50'
-                  }`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === index ? 'w-7 bg-secondary' : 'w-2 bg-neutral-border hover:bg-accent/50'
+                }`}
                 aria-label={`Go to testimonial ${i + 1}`}
               />
             ))}
@@ -961,8 +948,8 @@ export default function Home() {
   const communityCount = new Set(projects.map(p => p.location).filter(Boolean)).size
 
   const residentsTarget = 3000
-  const youthTarget = 100
-  const villagesTarget = communityCount || 15
+  const youthTarget     = 100
+  const villagesTarget  = communityCount || 15
 
   return (
     <div>
