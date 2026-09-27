@@ -14,7 +14,7 @@ const knowledgeBase = [
     // Candidate / General
     {
         keywords: ['who', 'fred', 'maisiba', 'marungu', 'candidate', 'about', 'background'],
-        answer: `Fred Maisiba Marungu is the candidate for Bogeka Ward MCA. He is a community-focused leader with a proven track record of delivering real projects for the people of Bogeka Ward. His campaign slogan is "Chinsiaga" — meaning together we move forward.`,
+        answer: `Fred Maisiba Marungu is the candidate for Bogeka Ward MCA. He is a community-focused leader with a proven track record of delivering real projects for the people of Bogeka Ward. His campaign slogan is "Chinsiaga" — meaning Mtu Wa Watu.`,
         link: { label: 'Learn more about Fred', to: '/about' },
     },
     // Slogan

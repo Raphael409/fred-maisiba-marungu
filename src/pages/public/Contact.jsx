@@ -148,10 +148,10 @@ export default function Contact() {
                   <div>
                     <p className="text-xs text-neutral-muted uppercase tracking-wide">Email Us</p>
                     <a
-                      href="mailto:fredmaisiba@gmail.com"
+                      href="mailto:fmarungu2011@gmail.com"
                       className="font-heading font-semibold text-primary hover:text-accent transition-colors"
                     >
-                      fredmaisiba@gmail.com
+                      fmarungu2011@gmail.com
                     </a>
                   </div>
                 </div>

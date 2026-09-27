@@ -218,24 +218,11 @@ export default function VisionMission() {
             <h2 className="font-heading font-bold text-3xl lg:text-4xl text-primary mb-3">
               Strategic Priorities &amp; Goals
             </h2>
-            <p className="text-neutral-muted leading-relaxed">
-              Six priority areas with clear, time-bound commitments across
-              the first 100 days, Year 1, and the full term.
+            <p className="text-neutral-muted leading-relaxed max-w-2xl mx-auto">
+              Six priority areas drawn from the Bogeka Ward Development Manifesto —
+              each reflecting what residents have said matters most and what
+              Fred Maisiba is committed to delivering for every household in the ward.
             </p>
-
-            {/* Legend */}
-            <div className="flex items-center justify-center gap-6 mt-5 flex-wrap">
-              {[
-                { color: 'bg-accent',    label: 'First 100 Days' },
-                { color: 'bg-secondary', label: 'Year 1' },
-                { color: 'bg-primary',   label: 'Full Term' },
-              ].map(({ color, label }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${color}`} />
-                  <span className="text-xs font-medium text-neutral-muted">{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

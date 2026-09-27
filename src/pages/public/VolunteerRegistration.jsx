@@ -250,7 +250,7 @@ export default function VolunteerRegistration() {
             Join Our Movement — Bogeka Ward
           </h1>
           <p className="font-accent italic text-xl text-white/80 mb-4">
-            &ldquo;Chinsiaga&rdquo; — Together We Move Forward
+            &ldquo;Chinsiaga&rdquo; — Mtu Wa Watu
           </p>
           <p className="text-white/70 max-w-2xl mx-auto leading-relaxed">
             Fred Maisiba's campaign is powered by the people of Bogeka.
@@ -348,11 +348,11 @@ export default function VolunteerRegistration() {
                   +254 719 562 294
                 </a>
                 <a
-                  href="mailto:fredmaisiba@gmail.com"
+                  href="mailto:fmarungu2011@gmail.com"
                   className="flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors font-medium mt-1"
                 >
                   <Mail size={14} />
-                  fredmaisiba@gmail.com
+                  fmarungu2011@gmail.com
                 </a>
               </div>
             </div>
