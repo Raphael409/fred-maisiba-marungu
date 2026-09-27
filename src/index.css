@@ -1,0 +1,136 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-body text-neutral-dark bg-white antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .container {
+    @apply max-w-[1200px] mx-auto;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────
+   React Quill overrides — match the campaign design system
+   ────────────────────────────────────────────────────────── */
+
+.ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid theme('colors.neutral.border');
+  background-color: theme('colors.neutral.bg');
+  font-family: theme('fontFamily.body');
+}
+
+.ql-container.ql-snow {
+  border: none;
+  font-family: theme('fontFamily.body');
+  font-size: theme('fontSize.base');
+  min-height: 180px;
+}
+
+.ql-editor {
+  min-height: 180px;
+}
+
+.ql-editor.ql-blank::before {
+  font-style: normal;
+  color: theme('colors.neutral.muted');
+}
+
+.ql-snow .ql-stroke {
+  stroke: theme('colors.neutral.muted');
+}
+
+.ql-snow .ql-fill {
+  fill: theme('colors.neutral.muted');
+}
+
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover,
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active {
+  color: theme('colors.accent.DEFAULT');
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+  stroke: theme('colors.accent.DEFAULT');
+}
+
+/* Render published article HTML cleanly on the public site */
+.article-content h2 {
+  @apply text-2xl font-heading font-semibold text-primary mt-6 mb-3;
+}
+
+.article-content h3 {
+  @apply text-xl font-heading font-semibold text-primary mt-5 mb-2;
+}
+
+.article-content p {
+  @apply mb-4 leading-relaxed text-neutral-dark;
+}
+
+.article-content ul,
+.article-content ol {
+  @apply mb-4 ml-6 space-y-1;
+}
+
+.article-content ul {
+  @apply list-disc;
+}
+
+.article-content ol {
+  @apply list-decimal;
+}
+
+.article-content a {
+  @apply text-accent underline hover:text-accent-dark;
+}
+
+.article-content strong {
+  @apply font-semibold text-neutral-dark;
+}
+
+.article-content em {
+  @apply italic;
+}
+
+.article-content blockquote {
+  @apply border-l-4 border-accent pl-5 py-1 my-5 italic text-neutral-muted bg-neutral-bg rounded-r-xl;
+}
+
+.article-content img {
+  @apply rounded-xl my-6 w-full max-w-full;
+}
+
+.article-content hr {
+  @apply border-neutral-border my-8;
+}
+
+.article-content code {
+  @apply bg-neutral-bg text-accent font-mono text-sm px-1.5 py-0.5 rounded;
+}
+
+.article-content pre {
+  @apply bg-neutral-bg rounded-xl p-4 overflow-x-auto my-4 text-sm font-mono;
+}
+
+/* Quill adds ql-align classes for text alignment */
+.article-content .ql-align-center { @apply text-center; }
+.article-content .ql-align-right  { @apply text-right; }
+.article-content .ql-align-justify { @apply text-justify; }

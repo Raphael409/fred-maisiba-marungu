@@ -1,0 +1,47 @@
+// storage.rules
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─── Helper: verify admin via Firestore admins collection ─────────────
+    function isAdmin() {
+      return request.auth != null
+        && firestore.exists(
+             /databases/(default)/documents/admins/$(request.auth.uid)
+           );
+    }
+
+    // ─── Public assets: readable by everyone, writable by admins only ─────
+
+    match /projects/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /gallery/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /news/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /events/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /candidate/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ─── Deny all other paths ─────────────────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
