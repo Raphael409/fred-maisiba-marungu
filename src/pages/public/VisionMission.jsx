@@ -125,11 +125,11 @@ export default function VisionMission() {
             Vision &amp; Mission
           </h1>
           <p className="font-accent italic text-xl text-white/80 mb-6">
-            &ldquo;Chinsiaga&rdquo; — Mtu Wa Watu
+            &ldquo;Chinsiaga&rdquo; — Together We Move Forward
           </p>
           <p className="text-white/70 max-w-2xl mx-auto leading-relaxed">
-            A clear direction for Bogeka Ward, grounded in real community
-            needs and backed by a proven track record of delivery.
+            A better Bogeka will be built through shared responsibility, transparent
+            leadership, community participation, and development that reaches every household.
           </p>
         </div>
       </section>
@@ -234,42 +234,72 @@ export default function VisionMission() {
         </div>
       </section>
 
-      {/* ── Commitment band ───────────────────────────────────── */}
+      {/* ── Core Principles ──────────────────────────────────── */}
       <section className="bg-white py-16 lg:py-20">
-        <div className="container mx-auto px-4 lg:px-8 max-w-3xl mx-auto">
-          <div className="text-center mb-10">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 bg-secondary/8 rounded-full px-4 py-1.5 mb-4">
-              <CheckCircle size={12} className="text-accent" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               <span className="text-xs font-heading font-semibold uppercase tracking-widest text-secondary">
-                Our Commitment
+                What He Stands For
               </span>
             </div>
             <h2 className="font-heading font-bold text-3xl lg:text-4xl text-primary mb-3">
-              How We Will Be Held Accountable
+              Core Principles
             </h2>
-            <p className="text-neutral-muted leading-relaxed max-w-xl mx-auto">
-              Fred Maisiba commits to the following accountability measures
-              throughout his term as Bogeka Ward MCA.
+            <p className="text-neutral-muted leading-relaxed">
+              Five principles drawn directly from the Bogeka Ward Development Manifesto —
+              the foundation of Fred Maisiba's leadership approach.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
-              'Quarterly public progress reports on all commitments',
-              'Open ward barazas every three months for community feedback',
-              'Public project tracking dashboard (online and physical notice boards)',
-              'Annual ward development report shared with all villages',
-              'Direct phone and email access to the MCA office',
-              'Zero tolerance for corruption — all procurement to be transparent',
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 bg-neutral-bg rounded-xl p-4 border border-neutral-border">
-                <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <CheckCircle size={14} className="text-accent" />
+              {
+                title: 'Integrity',
+                description: 'Every decision made in the open, every shilling accounted for. Fred leads with full transparency and zero tolerance for corruption.',
+                color: 'bg-primary',
+              },
+              {
+                title: 'Inclusion',
+                description: 'Every village, every family, every voice matters. Fred\'s development agenda leaves no corner of Bogeka Ward behind.',
+                color: 'bg-secondary',
+              },
+              {
+                title: 'Accountability',
+                description: 'Promises made are promises kept. Fred tracks every commitment and reports back openly to the community on progress and results.',
+                color: 'bg-accent',
+              },
+              {
+                title: 'Service',
+                description: 'Public office is not a privilege — it is a duty. Fred is committed to people-centred leadership that puts residents first.',
+                color: 'bg-secondary',
+              },
+              {
+                title: 'Sustainable Development',
+                description: 'Development that lasts — projects planned for long-term impact, not short-term gain, benefiting current and future generations of Bogeka Ward.',
+                color: 'bg-primary',
+              },
+            ].map((p, i) => (
+              <div
+                key={p.title}
+                className="bg-neutral-bg rounded-2xl p-7 border border-neutral-border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className={`w-10 h-10 rounded-xl ${p.color} flex items-center justify-center mb-4`}>
+                  <span className="text-white font-heading font-bold text-sm">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                 </div>
-                <p className="text-sm text-neutral-dark leading-relaxed">{item}</p>
+                <h3 className="font-heading font-bold text-lg text-primary mb-2">{p.title}</h3>
+                <p className="text-sm text-neutral-muted leading-relaxed">{p.description}</p>
               </div>
             ))}
           </div>
+
+          {/* Principles tag line */}
+          <p className="text-center text-neutral-muted font-heading font-semibold mt-10 tracking-wide">
+            Integrity &bull; Inclusion &bull; Accountability &bull; Service &bull; Sustainable Development
+          </p>
         </div>
       </section>
 
