@@ -260,9 +260,10 @@ function HeroSection({ projectCount, communityCount }) {
 
           {/* Main headline */}
           <h1 className="font-heading font-bold leading-[1.05] mb-6 text-[clamp(2.2rem,5vw,3.6rem)] text-white">
-            Leadership That{' '}
+            A Stronger Bogeka Starts with{' '}
+
             <span className="relative inline-block">
-              Delivers
+              Action
               <svg
                 className="absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 200 12"
@@ -277,14 +278,11 @@ function HeroSection({ projectCount, communityCount }) {
                 />
               </svg>
             </span>
-            {' '}Real Change
           </h1>
 
           {/* Subtext */}
           <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl">
-            Fred Maisiba Marungu is running for Bogeka Ward MCA — together we build
-            a stronger Bogeka through development, transparency, and opportunity.
-            Not promises — proven results.
+            Fred Maisiba Marungu is committed to practical development, accountable leadership, and greater opportunities for the people of Bogeka Ward.
           </p>
 
           {/* CTA buttons */}
@@ -293,21 +291,21 @@ function HeroSection({ projectCount, communityCount }) {
               to="/about"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-primary font-heading font-bold text-sm rounded-full shadow-float hover:bg-neutral-bg hover:scale-105 transition-all duration-200"
             >
-              About Fred Maisiba
+              About Fred
               <ArrowRight size={16} />
             </Link>
             <Link
               to="/volunteer"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent text-white font-heading font-bold text-sm rounded-full shadow-glow hover:bg-accent-dark hover:scale-105 transition-all duration-200"
             >
-              Join Our Movement
+              Get Involved
               <ArrowRight size={16} />
             </Link>
             <Link
-              to="/projects"
+              to="/vision-mission"
               className="inline-flex items-center gap-2 px-7 py-3.5 border-2 border-white/50 text-white font-heading font-semibold text-sm rounded-full hover:bg-white hover:text-primary hover:scale-105 transition-all duration-200"
             >
-              View Projects
+              Explore Our Vision
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -697,21 +695,21 @@ function NewsEventsSection() {
 // Replace placeholder quotes with real community testimonials once collected.
 const testimonials = [
   {
-    quote: '"Leadership should translate plans into measurable improvements in people\'s lives. That is the standard I hold myself to every day."',
+    quote: 'Leadership should translate plans into measurable improvements in people\'s lives. That is the standard I hold myself to every day.',
     name:  'Hon. Fred Maisiba Marungu',
     role:  'MCA Candidate, Bogeka Ward',
     avatar: '',
   },
   {
-    quote: '[Placeholder: A genuine quote from a Bogeka Ward resident about Fred\'s work in the community — 2-3 sentences. Replace with a real testimonial.]',
-    name:  '[Resident Name]',
-    role:  '[Village, Bogeka Ward]',
+    quote: 'The poultry initiative has given our community an opportunity to explore poultry farming as a source of income. We appreciate the support and hope to grow our skills and build more sustainable livelihoods through this initiative.',
+    name:  'Youth Lady',
+    role:  'Irianyi, Bogeka Ward',
     avatar: '',
   },
   {
-    quote: '[Placeholder: A quote from a community leader or farmer about the impact of Fred\'s programmes. Replace with a real testimonial.]',
-    name:  '[Community Leader Name]',
-    role:  '[Role / Village, Bogeka Ward]',
+    quote: 'Youth empowerment is about creating opportunities for young people to develop their skills, become self-reliant, and contribute to their communities. We welcome initiatives that encourage young people to participate in development and work towards a better future.',
+    name:  'Philip Obara',
+    role:  'Youth, Bogeka Ward',
     avatar: '',
   },
 ]
